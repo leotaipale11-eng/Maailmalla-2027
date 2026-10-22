@@ -149,3 +149,111 @@ function saveGame(){if(!started){status('Aloita peli ennen tallentamista.');retu
 function loadGame(){try{let raw=localStorage.getItem('maailmalla2027save');if(!raw){status('Tallennettua peliä ei löytynyt.');return}let d=JSON.parse(raw);if(!d.ps||d.ps.length!==2)throw new Error('bad save');mode=d.mode;ps=d.ps;turn=d.turn||0;avatar1=d.avatar1||ps[0].avatar;avatar2=d.avatar2||ps[1].avatar;started=true;locked=false;wheelBusy=false;$('start').classList.add('hidden');$('setup').classList.add('hidden');$('game').classList.remove('hidden');$('modal').classList.add('hidden');$('wheelModal').classList.add('hidden');$('prison').classList.add('hidden');$('winScreen').classList.add('hidden');$('roll').disabled=false;render();updateTop();status('📂 Tallennettu peli ladattu! '+ps[turn].name+', sinun vuorosi.')}catch(e){status('Tallennusta ei voitu ladata.')}}
 function backToMenu(){$('winScreen').classList.add('hidden');$('game').classList.add('hidden');$('start').classList.remove('hidden');started=false;locked=false}
 </script></body></html>
+
+
+
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Maailmalla 2027 🎃</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #151027;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      overflow-x: hidden;
+    }
+    h1 { color: #ff8c00; }
+    #countdown {
+      font-size: 1.5rem;
+      color: #ffd166;
+      margin: 20px;
+    }
+    .bat {
+      position: fixed;
+      top: 20%;
+      left: -60px;
+      font-size: 36px;
+      pointer-events: none;
+      animation: fly 8s linear infinite;
+      z-index: 10;
+    }
+    .bat:nth-of-type(2) {
+      top: 45%;
+      animation-duration: 11s;
+      animation-delay: 2s;
+    }
+    .bat:nth-of-type(3) {
+      top: 70%;
+      animation-duration: 9s;
+      animation-delay: 4s;
+    }
+    @keyframes fly {
+      from { transform: translateX(0) translateY(0); }
+      to { transform: translateX(110vw) translateY(-40px); }
+    }
+    main {
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    .panel {
+      padding: 20px;
+      background: #292044;
+      border-radius: 16px;
+      margin: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="bat">🦇</div>
+  <div class="bat">🦇</div>
+  <div class="bat">🦇</div>
+
+  <main>
+    <h1>🎃 Maailmalla 2027 🎃</h1>
+    <div class="panel">
+      <h2>Halloween-laskuri</h2>
+      <p>Halloween-tapahtumaan on aikaa:</p>
+      <div id="countdown">Lasketaan...</div>
+    </div>
+
+    <div class="panel">
+      <h2>🌍 Tervetuloa peliin!</h2>
+      <p>Maailmalla 2027</p>
+      <p>Halloween-lepakot lentävät ruudun poikki!</p>
+    </div>
+  </main>
+
+  <script>
+    const target = new Date("2026-10-23T15:00:00+03:00");
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = target - now;
+      const output = document.getElementById("countdown");
+
+      if (diff <= 0) {
+        output.textContent = "🎃 Halloween-aika on täällä! 🦇";
+        return;
+      }
+
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      const seconds = Math.floor((diff % 60000) / 1000);
+
+      output.textContent =
+        `${days} pv ${hours} h ${minutes} min ${seconds} s`;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
