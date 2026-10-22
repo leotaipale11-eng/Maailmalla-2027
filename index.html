@@ -259,3 +259,63 @@ function backToMenu(){$('winScreen').classList.add('hidden');$('game').classList
   </script>
 </body>
 </html>
+
+
+<!-- Halloween-musiikki -->
+<div id="halloweenMusic" style="
+  position:fixed;
+  right:12px;
+  bottom:16px;
+  z-index:100;
+  background:#182743;
+  border:2px solid #ff8c24;
+  border-radius:14px;
+  padding:10px;
+  color:white;
+  box-shadow:0 0 18px #ff751855;
+  font-family:system-ui,sans-serif;
+">
+  <div style="font-weight:900;color:#ffad42;margin-bottom:6px">
+    🎃 HALLOWEEN-MUSIIKKI
+  </div>
+  <button id="musicToggle" type="button"
+    style="background:#ff9e35;color:#21162a;padding:9px 12px">
+    ▶️ Käynnistä musiikki
+  </button>
+  <div style="font-size:11px;margin-top:5px">
+    👻 Kummitteleva tunnelma
+  </div>
+</div>
+
+<audio id="halloweenAudio" loop preload="none">
+  <source
+    src="https://upload.wikimedia.org/wikipedia/commons/transcoded/8/80/Spooky_Skeletons.ogg/Spooky_Skeletons.ogg.mp3"
+    type="audio/mpeg">
+</audio>
+
+<script>
+(() => {
+  const audio = document.getElementById("halloweenAudio");
+  const button = document.getElementById("musicToggle");
+
+  audio.volume = 0.25;
+
+  button.addEventListener("click", async () => {
+    if (audio.paused) {
+      try {
+        await audio.play();
+        button.textContent = "⏸️ Pysäytä musiikki";
+      } catch (error) {
+        button.textContent = "⚠️ Musiikkia ei voitu käynnistää";
+      }
+    } else {
+      audio.pause();
+      button.textContent = "▶️ Käynnistä musiikki";
+    }
+  });
+
+  audio.addEventListener("ended", () => {
+    button.textContent = "▶️ Käynnistä musiikki";
+  });
+})();
+</script>
