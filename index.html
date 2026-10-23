@@ -1,262 +1,365 @@
-<!doctype html><html lang="fi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Maailmalla 2027</title><style>
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#263f64,#0a1020 75%);color:#fff;font-family:system-ui,Arial,sans-serif}button,input{font:inherit}button{border:0;border-radius:12px;padding:12px 16px;font-weight:900;background:#ffd45a;color:#182238;box-shadow:0 4px #b58925;cursor:pointer}button:active{transform:translateY(2px);box-shadow:0 2px #b58925}.hidden{display:none!important}.screen{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:18px}.logo{font-size:clamp(34px,9vw,60px);font-weight:1000;color:#ffd45a;text-align:center;text-shadow:0 4px #80551b}.year{font-size:25px;letter-spacing:8px}.stars{font-size:28px;letter-spacing:10px;animation:twinkle 1.2s infinite alternate;margin:20px}@keyframes twinkle{to{transform:scale(1.1);filter:brightness(1.6)}}.menu{display:grid;gap:12px;width:min(340px,90vw);margin:25px 0}.credit{position:fixed;bottom:10px;font-size:12px;opacity:.65}.avatar-select{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 14px}.avatar-option{background:#0d1729;color:#fff;border:2px solid #506686;box-shadow:none;padding:8px 10px;font-size:22px}.avatar-option.selected{border-color:#ffd45a;background:#354768}.panel{background:#1b2944;border:1px solid #506686;border-radius:18px;padding:20px;width:min(420px,94vw)}input{display:block;width:100%;padding:12px;border-radius:10px;border:1px solid #7085a6;background:#0d1729;color:#fff;margin:8px 0 14px}.game{max-width:720px;margin:auto;padding:10px}.top{display:flex;justify-content:space-between;align-items:center;background:#192743;padding:12px;border-radius:14px;margin-bottom:10px}.money{font-size:22px;color:#ffd45a;font-weight:1000}.board{display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(7,min(12.7vw,76px));gap:3px;background:#273a55;padding:5px;border:2px solid #7185a0;border-radius:14px}.tile{position:relative;background:#eef2f7;color:#17243b;border-radius:5px;padding:3px 1px;text-align:center;display:flex;flex-direction:column;justify-content:space-between;align-items:center;font-weight:800;font-size:clamp(7px,2vw,11px);overflow:hidden}.tile .emoji{font-size:clamp(13px,4vw,23px)}.tile.corner{background:#ffdc75}.tile.hupi{background:#e4d4ff}.tile.world{background:#bdeaff}.tile.jail{background:#ffcaca}.owner{height:4px;position:absolute;top:0;left:0;right:0}.pieces{display:flex;gap:2px}.piece{width:12px;height:12px;border:2px solid white;border-radius:50%;display:inline-block}.blue{background:#2497ff}.red{background:#ff5265}.center{grid-column:2/7;grid-row:2/7;background:radial-gradient(circle,#314e76,#142039);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center}.center strong{font-size:clamp(16px,4.5vw,30px);color:#ffd45a}.center .stars{font-size:20px;margin:10px}.status{text-align:center;min-height:26px;margin:10px;font-weight:800}.controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px}.secondary{background:#dce8f8;box-shadow:0 4px #8799b4}.modal{position:fixed;inset:0;background:#020611d9;display:flex;align-items:center;justify-content:center;padding:18px;z-index:10}.card{width:min(330px,92vw);height:330px;perspective:900px}.inner{height:100%;position:relative;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.2,.8,.2,1)}.inner.flip{transform:rotateY(180deg)}.face{position:absolute;inset:0;backface-visibility:hidden;border:4px solid #ffd45a;border-radius:22px;background:linear-gradient(140deg,#fff6c9,#f3b72d);color:#382609;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px;box-shadow:0 0 35px #ffd45a55}.face.back{transform:rotateY(180deg);background:linear-gradient(140deg,#fff,#dcecff);border-color:#ff5265;color:#17243b}.big{font-size:55px}.face h2{margin:8px}.face p{font-size:19px;font-weight:900}.prison{position:fixed;inset:0;z-index:20;background:radial-gradient(circle,#35445a,#080c15);display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px}.cell{width:min(320px,86vw);height:250px;background:#111923;border:10px solid #77818e;position:relative;overflow:hidden}.bars{position:absolute;inset:0;display:flex;justify-content:space-evenly;padding-top:40px}.bars span{width:11px;height:100%;background:linear-gradient(90deg,#5a6570,#d7dce1,#59636e)}.person{position:absolute;bottom:8px;left:calc(50% - 25px);font-size:48px;animation:hop .5s infinite alternate}@keyframes hop{to{transform:translateY(-9px) rotate(-5deg)}}.prison h1{color:#ffd45a;animation:pop .5s both}.wheelbox{width:min(340px,90vw);background:#182743;border:2px solid #ffd45a;border-radius:22px;padding:20px;text-align:center;box-shadow:0 0 35px #ffd45a55}.wheel{width:220px;height:220px;max-width:70vw;max-height:70vw;border-radius:50%;margin:15px auto;background:conic-gradient(#ffd45a 0 45deg,#e85d75 45deg 90deg,#54c6a5 90deg 135deg,#6ba8ff 135deg 180deg,#b28aff 180deg 225deg,#ff9e4a 225deg 270deg,#f6f0d6 270deg 315deg,#70d6ff 315deg);border:8px solid #fff;box-shadow:0 0 0 5px #ffd45a;display:flex;align-items:center;justify-content:center;font-size:28px;transition:transform 2.2s cubic-bezier(.12,.72,.1,1)}.wheel.spin{transform:rotate(1440deg)}.win-screen{position:fixed;inset:0;z-index:30;background:radial-gradient(circle,#304d78,#060b16);display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:22px;overflow:hidden}.win-screen h1{font-size:clamp(34px,9vw,64px);color:#ffd45a;animation:pop .6s both;text-shadow:0 0 25px #ffd45a}.confetti{position:absolute;inset:0;pointer-events:none;font-size:24px;letter-spacing:10px;line-height:2;animation:twinkle .5s infinite alternate}.win-content{position:relative;z-index:1;background:#182743dd;padding:24px;border:2px solid #ffd45a;border-radius:22px}@keyframes pop{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
-.collection-screen{position:fixed;inset:0;z-index:40;background:#081120ee;display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}.collection-panel{width:min(680px,96vw);max-height:92vh;overflow:auto;background:#1b2944;border:2px solid #ffd45a;border-radius:20px;padding:20px;box-shadow:0 15px 50px #0009}.collection-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:16px 0}.souvenir{background:#0d1729;border:1px solid #506686;border-radius:12px;padding:12px;text-align:center;min-height:100px}.souvenir.locked{opacity:.5;filter:grayscale(1)}.souvenir .souvenir-icon{font-size:30px}.souvenir strong{display:block;margin:5px 0}.legend-row{display:flex;align-items:center;gap:10px;background:#0d1729;border-radius:10px;padding:10px;margin:8px 0}.legend-rank{font-size:24px}.menu-extra{display:grid;gap:10px;width:min(340px,90vw);margin-bottom:22px}@media(min-width:650px){.board{grid-template-rows:repeat(7,76px)}}
-</style></head><body>
-<section id="start" class="screen"><div class="stars">⭐ ✨ ⭐</div><div class="logo">MAAILMALLA</div><div class="year">2027</div><div class="menu"><button onclick="setup('single')">👤 YKSIN</button><button onclick="setup('two')">👥 KAKSIN</button><button onclick="setup('ai')">🤖 TEKOÄLY VS IHMINEN</button><button onclick="openOnline()">🌐 ONLINE-MONINPELI</button><button class="secondary" onclick="rules()">📜 SÄÄNNÖT</button></div><div class="menu-extra"><button class="secondary" onclick="openAlbum()">🧳 KERÄILYALBUMI</button><button class="secondary" onclick="openLegends()">👑 LEGENDAT</button></div><div class="credit">Leotonttu®</div></section>
-<section id="online" class="screen hidden"><div class="panel"><h2>🌐 Online-moninpeli</h2><p>Pelaa samaa peliä eri puhelimilla. Luo huone ja jaa kutsulinkki tai pelikoodi.</p><label>Oma nimi</label><input id="onlineName" maxlength="16" value="Pelaaja"><label>Pelihuoneen koodi (liittyessä)</label><input id="roomCode" maxlength="6" placeholder="Esim. A7K9Q2" autocapitalize="characters"><div class="controls"><button onclick="createOnlineRoom()">➕ LUO PELI</button><button onclick="joinOnlineRoom()">🔗 LIITY PELIIN</button></div><div id="onlineStatus" class="status">Online-peli vaatii Firebase-yhteyden asetukset.</div><div id="onlineInvite" class="hidden"><p>Jaa tämä koodi tai linkki toiselle pelaajalle:</p><h2 id="inviteCode" style="text-align:center;color:#ffd45a;letter-spacing:5px"></h2><button class="secondary" onclick="copyInvite()">📋 KOPIOI KUTSULINKKI</button><p id="waitingText">Odotetaan toista pelaajaa…</p><button id="onlineStart" class="hidden" onclick="startOnlineGame()">🎲 ALOITA PELI</button></div><details style="margin-top:16px"><summary>⚙️ Yhteyden asetukset</summary><p style="font-size:13px">Liitä Firebase-projektin Web-asetukset JSON-muodossa. Asetukset tallentuvat vain tähän selaimeen. Online-peli vaatii lisäksi Realtime Database -tietokannan ja sen säännöt.</p><textarea id="firebaseConfig" rows="5" placeholder='{"apiKey":"...","authDomain":"...","databaseURL":"https://...firebasedatabase.app","projectId":"...","appId":"..."}' style="width:100%;background:#0d1729;color:white;border-radius:10px;padding:10px"></textarea><button class="secondary" onclick="saveFirebaseConfig()">💾 TALLENNA ASETUKSET</button></details><div class="controls"><button class="secondary" onclick="leaveOnline()">TAKAISIN</button></div></div></section>
-<section id="setup" class="screen hidden"><div class="panel"><h2>Valitse pelaajat</h2><label>🔵 Sininen pelaaja – nimi</label><input id="n1" value="Pelaaja 1" maxlength="16"><label>Valitse oma pelihahmo</label><div class="avatar-select" id="avatars1"><button type="button" class="avatar-option selected" data-player="1" data-avatar="🧑‍🚀" onclick="pickAvatar(1,'🧑‍🚀',this)">🧑‍🚀</button><button type="button" class="avatar-option" data-player="1" data-avatar="🧙" onclick="pickAvatar(1,'🧙',this)">🧙</button><button type="button" class="avatar-option" data-player="1" data-avatar="🦊" onclick="pickAvatar(1,'🦊',this)">🦊</button><button type="button" class="avatar-option" data-player="1" data-avatar="🤖" onclick="pickAvatar(1,'🤖',this)">🤖</button><button type="button" class="avatar-option" data-player="1" data-avatar="🧚" onclick="pickAvatar(1,'🧚',this)">🧚</button></div><div id="redfield"><label>🔴 Punainen pelaaja – nimi</label><input id="n2" value="Pelaaja 2" maxlength="16"><label>Valitse oma pelihahmo</label><div class="avatar-select" id="avatars2"><button type="button" class="avatar-option" data-player="2" data-avatar="🧑‍🚀" onclick="pickAvatar(2,'🧑‍🚀',this)">🧑‍🚀</button><button type="button" class="avatar-option selected" data-player="2" data-avatar="🧙" onclick="pickAvatar(2,'🧙',this)">🧙</button><button type="button" class="avatar-option" data-player="2" data-avatar="🦊" onclick="pickAvatar(2,'🦊',this)">🦊</button><button type="button" class="avatar-option" data-player="2" data-avatar="🤖" onclick="pickAvatar(2,'🤖',this)">🤖</button><button type="button" class="avatar-option" data-player="2" data-avatar="🧚" onclick="pickAvatar(2,'🧚',this)">🧚</button></div></div><div class="controls"><button onclick="startGame()">🎲 ALOITA</button><button class="secondary" onclick="home()">Takaisin</button></div></div></section>
-<main id="game" class="game hidden"><div class="top"><div><b id="activeName">Sinisen vuoro</b><div style="font-size:12px;color:#bacbe0">Aktiivisen pelaajan rahat</div></div><div class="money" id="money">1 500 €</div></div><div id="board" class="board"></div><div id="status" class="status">Heitä noppaa!</div><div class="controls"><button id="roll" onclick="roll()">🎲 HEITÄ NOPPAA</button>
-<button id="buy" class="hidden" onclick="buy()">🛒 OSTA KAUPUNKI</button><button id="skipBuy" class="hidden secondary" onclick="skipBuy()">🚶 JÄTÄ OSTAMATTA</button><button class="secondary" onclick="spinWheel()">🎡 ONNENPYÖRÄ</button><button class="secondary" onclick="saveGame()">💾 TALLENNA</button><button class="secondary" onclick="loadGame()">📂 LATAA</button><button class="secondary" onclick="rules()">📜 SÄÄNNÖT</button></div><div class="status" style="font-size:12px;color:#c4d4e8">Ensimmäisenä 10 000 € voittaa.</div></main>
-<div id="modal" class="modal hidden"><div class="card"><div id="inner" class="inner"><div class="face"><div id="frontIcon" class="big">🃏</div><h2 id="frontTitle">HUPIKORTTI</h2><p>Paina kääntääksesi</p><button onclick="flip()">KÄÄNNÄ KORTTI</button></div><div class="face back"><div id="backIcon" class="big">💰</div><h2 id="backTitle">BONUS!</h2><p id="cardText">Saat pankista 250 €</p><button onclick="closeCard()">JATKA</button></div></div></div></div>
-<div id="wheelModal" class="modal hidden"><div class="wheelbox"><h2>🎡 ONNENPYÖRÄ</h2><p id="wheelText">Pyöräytä ja voita palkinto!</p><div id="wheel" class="wheel">⭐</div><button id="spinBtn" onclick="doSpin()">PYÖRÄYTÄ!</button><button id="wheelClose" class="secondary hidden" onclick="closeWheel()">JATKA PELIÄ</button></div></div><div id="winScreen" class="win-screen hidden"><div class="confetti">🎉 ✨ 🏆 🎊 ⭐ 🎉 ✨ 🏆 🎊</div><div class="win-content"><div style="font-size:64px" id="winnerAvatar">🏆</div><h1>VOITTAJA!</h1><h2 id="winnerName"></h2><p id="winnerMoney"></p><p>🌟 Maailmanmatkaaja 2027 🌟</p><p>👑 Voitto lisättiin legendaaristen voittajien listaan!</p><button onclick="backToMenu()">PÄÄVALIKKOON</button><button class="secondary" onclick="openLegends()">KATSO LEGENDAT</button></div></div><div id="prison" class="prison hidden"><div class="cell"><div class="bars" id="bars"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="person" id="person">😢</div></div><h1 id="prisonTitle">🔒 VANKILASSA</h1><h2 id="prisonSub">2 KIERROSTA</h2><p id="prisonText">Nappula joutui vankilaan.</p><button onclick="closePrison()">JATKA</button></div>
-<div id="albumScreen" class="collection-screen hidden"><div class="collection-panel"><h1>🧳 Matkamuistoalbumi</h1><p id="albumSummary">Kerää matkamuistoja eri puolilta maailmaa!</p><div id="albumGrid" class="collection-grid"></div><button onclick="closeCollectionScreens()">TAKAISIN</button></div></div>
-<div id="legendScreen" class="collection-screen hidden"><div class="collection-panel"><h1>👑 Legendaariset voittajat</h1><p>Maailmalla-pelin mestarit tallentuvat tänne tällä selaimella.</p><div id="legendList"></div><button onclick="closeCollectionScreens()">TAKAISIN</button><button class="secondary" onclick="clearLegends()">TYHJENNÄ HISTORIA</button></div></div>
-<!-- Firebase SDK: required for online rooms. These scripts need an internet connection. -->
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
-<script>
-const $=id=>document.getElementById(id);let mode='two',ps=[],turn=0,pending=null,cardResult=null,locked=false,started=false,avatar1='🧑‍🚀',avatar2='🧙',wheelBusy=false;
-let onlineRoom=null,onlineSeat=-1,onlineRef=null,onlineListener=null,onlineApplying=false,onlineStartedByHost=false,firebaseApp=null,onlineDb=null,onlineUser=null;function onlineMsg(t){const e=$('onlineStatus');if(e)e.textContent=t}
-function openOnline(){
-  $('start').classList.add('hidden');$('setup').classList.add('hidden');$('online').classList.remove('hidden');
-  const saved=readStore('maailmalla2027firebaseConfig','');
-  if(saved)$('firebaseConfig').value=saved;
-  const params=new URLSearchParams(location.search),code=params.get('room');
-  if(code)$('roomCode').value=code.toUpperCase();
-  if(!window.firebase){
-    onlineMsg('Online-kirjasto ei latautunut. Tarkista yhteys ja kokeile avata tiedosto Chromessa tai Safarissa. Jos käytät sisältöä estävää selainta, salli gstatic.com.');
-    return;
-  }
-  try{
-    const cfg=JSON.parse(saved||'{}');
-    if(cfg.apiKey&&cfg.databaseURL&&cfg.projectId&&cfg.appId)
-      onlineMsg('Firebase-asetukset löytyivät. Voit luoda huoneen tai liittyä pelikoodilla.');
-    else
-      onlineMsg('Internet-yhteys voi toimia, mutta online-peli tarvitsee vielä Firebase-projektin asetukset. Avaa “Yhteyden asetukset” ja lisää ne.');
-  }catch(e){onlineMsg('Firebase-asetukset eivät ole kelvollista JSON-muotoa. Tarkista asetusten JSON.')}
-}
-function leaveOnline(){detachOnline();$('online').classList.add('hidden');$('start').classList.remove('hidden')}
-function saveFirebaseConfig(){
-  try{const cfg=JSON.parse($('firebaseConfig').value);if(!cfg.apiKey||!cfg.databaseURL||!cfg.projectId||!cfg.appId)throw new Error('Puuttuvia kenttiä');
-    localStorage.setItem('maailmalla2027firebaseConfig',JSON.stringify(cfg));onlineMsg('Asetukset tallennettu tähän selaimeen. Voit nyt luoda huoneen tai liittyä siihen.');
-  }catch(e){onlineMsg('Asetukset eivät kelpaa. Liitä koko Firebase Web -asetusten JSON-objekti, jossa on apiKey, databaseURL, projectId ja appId.')}
-}
-async function ensureFirebase(){
-  if(!window.firebase)throw new Error('Online-kirjasto ei latautunut. Tarkista internet tai selaimen sisältöesto (gstatic.com).');
-  const cfg=readStore('maailmalla2027firebaseConfig',null);if(!cfg)throw new Error('Tallenna ensin Firebase-asetukset online-näkymän asetuksista.');
-  if(!firebaseApp){firebaseApp=firebase.initializeApp(cfg);onlineDb=firebase.database();}
-  if(!onlineUser){const cred=await firebase.auth().signInAnonymously();onlineUser=cred.user;}
-  return onlineDb;
-}
-function makeRoomCode(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let c='';for(let i=0;i<6;i++)c+=chars[Math.floor(Math.random()*chars.length)];return c}
-function detachOnline(){if(onlineRef&&onlineListener)onlineRef.off('value',onlineListener);onlineRef=null;onlineListener=null;onlineRoom=null;onlineSeat=-1;onlineStartedByHost=false}
-async function createOnlineRoom(){
-  try{
-    const db=await ensureFirebase();detachOnline();const code=makeRoomCode(),name=($('onlineName').value.trim()||'Pelaaja').slice(0,16);
-    onlineRoom=code;onlineSeat=0;onlineRef=db.ref('rooms/'+code);
-    await onlineRef.set({code,hostUid:onlineUser.uid,status:'waiting',players:[{uid:onlineUser.uid,name,avatar:avatar1,color:'blue',money:1500,pos:0,owned:[],jail:0},null],turn:0,createdAt:Date.now(),updatedAt:Date.now()});
-    showOnlineInvite(code);listenOnlineRoom();onlineMsg('Pelihuone luotu. Lähetä kutsu toiselle pelaajalle.');
-  }catch(e){onlineMsg('Online-yhteys ei onnistunut: '+e.message)}
-}
-async function joinOnlineRoom(){
-  try{
-    const code=$('roomCode').value.trim().toUpperCase();if(!/^[A-HJ-NP-Z2-9]{6}$/.test(code))throw new Error('Syötä kuusimerkkinen pelikoodi.');
-    const db=await ensureFirebase();detachOnline();onlineRoom=code;onlineRef=db.ref('rooms/'+code);
-    const result=await onlineRef.transaction(room=>{
-      if(!room||room.status!=='waiting'||!room.players||room.players[1])return;
-      room.players[1]={uid:onlineUser.uid,name:($('onlineName').value.trim()||'Pelaaja').slice(0,16),avatar:avatar2,color:'red',money:1500,pos:0,owned:[],jail:0};
-      room.updatedAt=Date.now();return room;
-    });
-    if(!result.committed){onlineRoom=null;onlineRef=null;throw new Error('Huonetta ei löytynyt, peli on jo alkanut tai huone on täynnä.')}
-    onlineSeat=1;showOnlineInvite(code);listenOnlineRoom();onlineMsg('Liityit peliin! Odota, että huoneen luoja aloittaa pelin.');
-  }catch(e){onlineMsg('Peliin liittyminen epäonnistui: '+e.message)}
-}
-function showOnlineInvite(code){
-  $('onlineInvite').classList.remove('hidden');$('inviteCode').textContent=code;
-  const url=new URL(location.href);url.searchParams.set('room',code);window.onlineInviteUrl=url.toString();
-  $('onlineStart').classList.toggle('hidden',onlineSeat!==0);
-  $('waitingText').textContent=onlineSeat===0?'Odotetaan toista pelaajaa…':'Odotetaan pelin aloittamista…';
-}
-async function copyInvite(){
-  const text=window.onlineInviteUrl||location.href;
-  try{await navigator.clipboard.writeText(text);onlineMsg('Kutsulinkki kopioitu! Lähetä se toiselle pelaajalle.')}
-  catch(e){prompt('Kopioi kutsulinkki:',text)}
-}
-function listenOnlineRoom(){
-  if(!onlineRef)return;
-  onlineListener=snap=>{
-    const room=snap.val();if(!room){onlineMsg('Pelihuone suljettiin tai sitä ei löytynyt.');return}
-    if(room.status==='waiting'){
-      const count=(room.players||[]).filter(Boolean).length;
-      $('waitingText').textContent=count>=2?'Molemmat pelaajat ovat paikalla! Huoneen luoja voi aloittaa.':'Odotetaan toista pelaajaa…';
-      $('onlineStart').classList.toggle('hidden',!(onlineSeat===0&&count===2));
-      onlineMsg(count>=2?'Molemmat pelaajat ovat valmiina.':'Huone on auki. Jaa kutsu toiselle pelaajalle.');
-      return;
-    }
-    if(room.status==='playing'||room.status==='finished'){
-      onlineApplying=true;mode='online';ps=room.players||[];turn=room.turn||0;started=room.status==='playing';
-      $('online').classList.add('hidden');$('start').classList.add('hidden');$('setup').classList.add('hidden');$('game').classList.remove('hidden');
-      render();updateTop();$('roll').disabled=!started||onlineSeat!==turn;locked=!started||onlineSeat!==turn;
-      status(room.status==='finished'?'🏆 Peli päättyi!':(onlineSeat===turn?'Sinun vuorosi!':'Odotetaan '+(ps[turn]?.name||'vastustajaa')+' siirtoa…'));
-      if(room.status==='finished'&&room.winner){showRemoteWinner(room.winner)}
-      onlineApplying=false;
-    }
-  };
-  onlineRef.on('value',onlineListener,err=>onlineMsg('Yhteysvirhe: '+err.message));
-}
-async function startOnlineGame(){
-  try{
-    if(onlineSeat!==0||!onlineRef)throw new Error('Vain huoneen luoja voi aloittaa.');
-    const snap=await onlineRef.once('value'),room=snap.val();if(!room||!room.players||!room.players[1])throw new Error('Toinen pelaaja ei ole vielä liittynyt.');
-    room.players=room.players.map((p,i)=>({...p,color:i===0?'blue':'red',money:1500,pos:0,owned:[],jail:0}));
-    room.status='playing';room.turn=0;room.updatedAt=Date.now();await onlineRef.set(room);
-    onlineSeat=0;mode='online';onlineMsg('Peli alkaa!');
-  }catch(e){onlineMsg('Peliä ei voitu aloittaa: '+e.message)}
-}
-function syncOnline(extra={}){
-  if(!onlineRef||onlineApplying||!onlineRoom||!onlineDb)return;
-  const payload={players:ps,turn,status:started?'playing':'finished',updatedAt:Date.now(),...extra};
-  onlineRef.update(payload).catch(e=>onlineMsg('Tallennusvirhe: '+e.message));
-}
-function showRemoteWinner(w){
-  $('game').classList.add('hidden');$('winnerAvatar').textContent=w.avatar||'🏆';$('winnerName').textContent=(w.name||'Pelaaja')+' voitti!';$('winnerMoney').textContent='Rahaa: '+Number(w.money||0).toLocaleString('fi-FI')+' €';$('winScreen').classList.remove('hidden');
-}
-function pickAvatar(n,a,el){if(n===1)avatar1=a;else avatar2=a;document.querySelectorAll('.avatar-option[data-player="'+n+'"]').forEach(b=>b.classList.remove('selected'));el.classList.add('selected')}
-const spaces=[['ALKU','🚦','start'],['Rovaniemi','🇫🇮','property',400],['Hupikortti','🎉','hupi'],['keminmaa','🇫🇮','property',555],['Raha','💰','money'],['Tukholma','🇸🇪','property',1080],['Maailmalla','🌍','world'],['VANKILA','🔒','jail'],['Pariisi','🇫🇷','property',850],['Raha','💰','money'],['Mene vankilaan','🚨','gotojail'],['Tokio','🇯🇵','property',1200],['Hupikortti','🎉','hupi'],['Dubai','🇦🇪','property',1500],['Maailmalla','🌍','world'],['Lontoo','🇬🇧','property',1800],['Raha','💰','money'],['New York','🇺🇸','property',2200],['Anna seuraavalle 50 €','💸','give'],['Hupikortti','🎉','hupi'],['Sydney','🇦🇺','property',2600],['Maailmalla','🌍','world'],['Jackpot','💎','money'],['Rio de Janeiro','🇧🇷','property',3200]];
-const souvenirInfo={1:['❄️','Rovaniemen revontuli'],3:['🏰','Helsingin design'],5:['🧜','Tukholman meri'],8:['🗼','Pariisin miniatyyri'],11:['🗻','Tokion Fuji'],13:['🐪','Dubain aavikko'],15:['🎡','Lontoon maailmanpyörä'],17:['🗽','New Yorkin vapaudenpatsas'],20:['🦘','Sydneyn kenguru'],23:['🎭','Rion karnevaali']};
-function readStore(key,fallback){try{const v=JSON.parse(localStorage.getItem(key)||'null');return v??fallback}catch(e){return fallback}}
-function openAlbum(){renderAlbum();$('albumScreen').classList.remove('hidden')}
-function renderAlbum(){const collected=readStore('maailmalla2027album',[]);const grid=$('albumGrid');grid.innerHTML='';Object.keys(souvenirInfo).forEach(k=>{const info=souvenirInfo[k],got=collected.includes(Number(k)),tile=document.createElement('div');tile.className='souvenir'+(got?'':' locked');tile.innerHTML='<div class="souvenir-icon">'+(got?info[0]:'❔')+'</div><strong>'+(got?info[1]:'Tuntematon muisto')+'</strong><small>'+(got?'KERÄTTY':'Löydä ruudusta '+spaces[k][0])+'</small>';grid.appendChild(tile)});$('albumSummary').textContent='Kerätty '+collected.length+' / '+Object.keys(souvenirInfo).length+' matkamuistoa.'}
-function collectSouvenir(idx){if(!souvenirInfo[idx])return;const collected=readStore('maailmalla2027album',[]);if(collected.includes(idx))return;collected.push(idx);try{localStorage.setItem('maailmalla2027album',JSON.stringify(collected))}catch(e){}status('🧳 UUSI MATKAMUISTO: '+souvenirInfo[idx][1]+'!')}
-function openLegends(){renderLegends();$('legendScreen').classList.remove('hidden')}
-function renderLegends(){const list=$('legendList'),wins=readStore('maailmalla2027legends',[]);list.innerHTML='';if(!wins.length){list.innerHTML='<p>🏆 Ei vielä mestareita. Pelaa peli loppuun ja nimesi pääsee tänne!</p>';return}wins.forEach((w,i)=>{const row=document.createElement('div');row.className='legend-row';row.innerHTML='<div class="legend-rank">'+(['🥇','🥈','🥉'][i]||'🏆')+'</div><div style="font-size:28px">'+escapeHtml(w.avatar||'🏆')+'</div><div style="flex:1"><strong>'+escapeHtml(w.name)+'</strong><div>'+Number(w.money||0).toLocaleString('fi-FI')+' € · '+escapeHtml(w.date||'')+'</div></div>';list.appendChild(row)})}
-function escapeHtml(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function closeCollectionScreens(){$('albumScreen').classList.add('hidden');$('legendScreen').classList.add('hidden')}
-function clearLegends(){if(confirm('Tyhjennetäänkö legendaaristen voittajien historia?')){try{localStorage.removeItem('maailmalla2027legends')}catch(e){}renderLegends()}}
-function setup(m){mode=m;$('start').classList.add('hidden');$('setup').classList.remove('hidden');$('redfield').classList.toggle('hidden',m!=='two');$('n1').value='Pelaaja 1';$('n2').value='Pelaaja 2'}function home(){$('setup').classList.add('hidden');$('start').classList.remove('hidden')}function rules(){alert('MAAILMALLA 2027\nHeitä noppaa ja liiku. Osta vapaita katuja. Hupi- ja Maailmalla-ruuduissa nostetaan kortti. Raha-ruuduissa voit saada jopa 1 500 €. Hahmosi näkyy nappulana. Maailmalla-korteista voi saada isoja matkailupalkintoja. Onnenpyörää voi pyöräyttää oman vuoron aikana. Kerää matkamuistoja kaupunkiruuduista ja katso legendaariset voittajat päävalikosta. Tallenna peli, niin voit ladata sen myöhemmin samassa selaimessa. Vankilassa olet 2 omaa kierrosta. Ensimmäisenä 10 000 € voittaa. Kerää kaikki kaupungit talteen siun kaupunki kansioon vai mikä lie ✌🏻🙏🏻')}function startGame(){let a=$('n1').value.trim()||'Pelaaja 1',b=mode==='ai'?'Maailmalla AI':mode==='single'?'Pankki':$('n2').value.trim()||'Pelaaja 2';ps=[{name:a,color:'blue',avatar:avatar1,money:1500,pos:0,owned:[],jail:0},{name:b,color:'red',avatar:mode==='ai'?'🤖':avatar2,money:1500,pos:0,owned:[],jail:0}];turn=0;started=true;$('setup').classList.add('hidden');$('game').classList.remove('hidden');render();updateTop();status('Heitä noppaa, '+a+'!');$('roll').disabled=false}
-function render(){let b=$('board');b.innerHTML='';let coords=[];for(let c=0;c<7;c++)coords.push([0,c]);for(let r=1;r<7;r++)coords.push([r,6]);for(let c=5;c>=0;c--)coords.push([6,c]);for(let r=5;r>=1;r--)coords.push([r,0]);for(let i=0;i<24;i++){let s=spaces[i],e=document.createElement('div');e.className='tile '+(['start','jail','gotojail'].includes(s[2])?'corner ':'')+(s[2]==='hupi'?'hupi ':'')+(s[2]==='world'?'world ':'')+(s[2]==='jail'||s[2]==='gotojail'?'jail':'');e.style.gridRow=coords[i][0]+1;e.style.gridColumn=coords[i][1]+1;let owner=ps.find(p=>p.owned.includes(i));e.innerHTML=`<div class="owner" style="background:${owner?owner.color==='blue'?'#2497ff':'#ff5265':'transparent'}"></div><div class="emoji">${s[1]}</div><div>${s[0]}</div><div>${s[3]?s[3]+' €':''}</div><div class="pieces">${ps.filter(p=>p.pos===i).map(p=>`<span class="piece ${p.color}" title="${p.name}" style="width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px;border:1px solid white">${p.avatar}</span>`).join('')}</div>`;b.appendChild(e)}let c=document.createElement('div');c.className='center';c.innerHTML='<div class="stars">⭐ ✨ ⭐</div><strong>MAAILMALLA</strong><b>2027</b><div class="stars">✨ ⭐ ✨</div>';b.appendChild(c)}function updateTop(){let p=ps[turn];$('activeName').textContent=(p.color==='blue'?'🔵 ':'🔴 ')+p.name+' vuoro';$('money').textContent=p.money.toLocaleString('fi-FI')+' €'}function status(s){$('status').textContent=s}
-function roll(){if(mode==='online'&&onlineSeat!==turn){status('Odota omaa vuoroasi.');return}if(locked||$('roll').disabled)return;let p=ps[turn];if(p.jail>0){p.jail--;if(p.jail>0){status('🔒 '+p.name+' on vankilassa vielä '+p.jail+' kierrosta.');endTurn();return}status('🔓 VAPAANA!');}locked=true;$('roll').disabled=true;$('buy').classList.add('hidden');let n=0,iv=setInterval(()=>{ $('roll').textContent='🎲 '+(1+Math.floor(Math.random()*6));if(++n>9){clearInterval(iv);$('roll').textContent='🎲 HEITÄ NOPPAA';let r=1+Math.floor(Math.random()*6),old=p.pos;p.pos=(p.pos+r)%24;if(p.pos<old)p.money+=200;render();updateTop();setTimeout(()=>land(spaces[p.pos]),300)}},80)}function land(s){let p=ps[turn],idx=p.pos;if(s[2]==='property'){collectSouvenir(idx);let o=ps.find(x=>x.owned.includes(idx));if(o){status(o===p?'Oma katu!':s[0]+' kuuluu pelaajalle '+o.name+'.');endTurn()}else{pending=idx;status(s[0]+' maksaa '+s[3]+' €. Ostatko?');$('buy').classList.remove('hidden');locked=false}}else if(s[2]==='hupi'||s[2]==='world')drawCard(s[2]);else if(s[2]==='money'){let n=[100,250,500,750,1000,1500][Math.floor(Math.random()*6)];p.money+=n;updateTop();status('💰 Sait pankista '+n+' €!');winCheck();endTurn()}else if(s[2]==='give'){let o=ps[1-turn],n=Math.min(50,p.money);p.money-=n;o.money+=n;updateTop();status('💸 Annoit '+o.name+' '+n+' €!');winCheck();endTurn()}else if(s[2]==='gotojail'){p.pos=7;p.jail=2;render();showPrison(false)}else if(s[2]==='jail'){status('Vain vierailu vankilassa.');endTurn()}else{status('🚦 Ohitit ALUN!');endTurn()}}
-function buy(){if(mode==='online'&&onlineSeat!==turn)return;let p=ps[turn],s=spaces[pending];if(p.money<s[3]){status('Rahasi eivät riitä!');$('buy').classList.add('hidden');endTurn();return}p.money-=s[3];p.owned.push(pending);$('buy').classList.add('hidden');render();updateTop();status('🏠 '+s[0]+' ostettu!');winCheck();endTurn()}
-const decks={hupi:[['🎉','SUURI BONUS!','Saat pankista 750 €',750],['🍀','ONNENPÄIVÄ!','Saat pankista 500 €',500],['🎁','JACKPOT!','Saat pankista 1 500 €',1500],['🎈','MATKAPALKINTO!','Saat pankista 1 000 €',1000],['💸','YLLÄTYSLASKU','Maksa pankille 250 €',-250],['💎','KULTAINEN LÖYTÖ!','Saat pankista 2 000 €',2000],['🚀','RAKETTIBONUS!','Saat pankista 1 250 €',1250],['🎟️','ILMAINEN SEIKKAILU!','Saat pankista 900 €',900],['🧳','MATKALAISEN LÖYTÖ!','Saat pankista 600 €',600],['🌈','ONNENPOTKU!','Saat pankista 1 750 €',1750],['🧾','YLLÄTYSLASKU','Maksa pankille 400 €',-400]],world:[['🌍','MAAILMANMATKAAJA!','Saat pankista 1 000 €',1000],['✈️','ILMAINEN LENTO!','Saat pankista 750 €',750],['🗼','SEIKKAILUBONUS!','Saat pankista 1 500 €',1500],['💸','MATKAKULU','Maksa pankille 200 €',-200],['🏆','MATKAILUPALKINTO!','Saat pankista 2 000 €',2000],['🗺️','MAAILMANMESTARI!','Saat pankista 1 800 €',1800],['🏝️','TROOPPINEN LÖYTÖ!','Saat pankista 1 250 €',1250],['🚕','KALLIS TAKSIMATKA','Maksa pankille 350 €',-350],['💼','MATKASOPIMUS!','Saat pankista 2 500 €',2500]]};function drawCard(type){locked=true;$('modal').classList.remove('hidden');$('inner').classList.remove('flip');let c=decks[type][Math.floor(Math.random()*decks[type].length)];cardResult=c;$('frontIcon').textContent=type==='hupi'?'🎉':'🌍';$('frontTitle').textContent=type==='hupi'?'HUPIKORTTI':'MAAILMALLA-KORTTI';$('backIcon').textContent=c[0];$('backTitle').textContent=c[1];$('cardText').textContent=c[2]}function flip(){if(!$('inner').classList.contains('flip')){$('inner').classList.add('flip');ps[turn].money=Math.max(0,ps[turn].money+cardResult[3]);updateTop();render();if(mode==='online')syncOnline()}}function closeCard(){$('modal').classList.add('hidden');winCheck();if(mode==='online'&&started)syncOnline();endTurn()}
-function showPrison(release){$('prison').classList.remove('hidden');$('person').textContent=release?'😄':'😢';$('prisonTitle').textContent=release?'🔓 VAPAANA!':'🔒 VANKILASSA';$('prisonSub').textContent=release?'TAKAISIN PELIIN':'2 KIERROSTA';$('prisonText').textContent=release?'Kalterit aukeavat ja nappula hyppää iloisesti!':ps[turn].name+' kävelee surullisena selliin...';$('bars').style.animation=release?'barsopen .8s forwards':'';if(release)$('bars').style.transform='translateX(110%)'}function closePrison(){$('prison').classList.add('hidden');endTurn()}
-function winCheck(){let w=ps.find(p=>p.money>=10000);if(w&&started){if(mode==='online'){started=false;syncOnline({status:'finished',winner:{name:w.name,avatar:w.avatar,money:w.money}})}started=false;try{const wins=readStore('maailmalla2027legends',[]);wins.unshift({name:w.name,avatar:w.avatar,money:w.money,date:new Date().toLocaleDateString('fi-FI')});localStorage.setItem('maailmalla2027legends',JSON.stringify(wins.slice(0,20)));localStorage.removeItem('maailmalla2027save')}catch(e){}$('game').classList.add('hidden');$('winnerAvatar').textContent=w.avatar;$('winnerName').textContent=w.name+' voitti!';$('winnerMoney').textContent='Rahaa: '+w.money.toLocaleString('fi-FI')+' €';$('winScreen').classList.remove('hidden')}}function endTurn(){$('buy').classList.add('hidden');if(!started)return;turn=1-turn;updateTop();if(mode==='online')syncOnline();if(mode==='online'){locked=onlineSeat!==turn;$('roll').disabled=onlineSeat!==turn;status(onlineSeat===turn?'Sinun vuorosi!':'Odotetaan '+ps[turn].name+' siirtoa…');return}if(mode!=='two'&&turn===1){$('roll').disabled=true;status('🤖 Vastustaja miettii...');setTimeout(aiTurn,700)}else{$('roll').disabled=false;locked=false;status(ps[turn].name+', sinun vuorosi!')}}function aiTurn(){if(!started)return;let p=ps[turn];if(p.jail>0)p.jail--;let r=1+Math.floor(Math.random()*6),old=p.pos;p.pos=(p.pos+r)%24;if(p.pos<old)p.money+=200;let s=spaces[p.pos];if(s[2]==='property'&&!ps.some(x=>x.owned.includes(p.pos))&&p.money>=s[3]&&Math.random()>.25){p.money-=s[3];p.owned.push(p.pos);status('🤖 AI osti '+s[0])}else if(s[2]==='money')p.money+=250;else if(s[2]==='hupi'||s[2]==='world')p.money+=150;else if(s[2]==='gotojail'){p.pos=7;p.jail=2}render();updateTop();winCheck();if(started)endTurn()}
-
-const wheelPrizes=[{label:'+500 €',value:500,icon:'💰'},{label:'+1 000 €',value:1000,icon:'💎'},{label:'+250 €',value:250,icon:'🍀'},{label:'−200 €',value:-200,icon:'💸'},{label:'+1 500 €',value:1500,icon:'🏆'},{label:'+750 €',value:750,icon:'🎁'},{label:'BONUS +2 000 €',value:2000,icon:'🚀'},{label:'−100 €',value:-100,icon:'🧾'}];
-function spinWheel(){if(mode==='online'&&onlineSeat!==turn){status('Odota omaa vuoroasi.');return}if(!started||locked||wheelBusy)return;wheelBusy=true;locked=true;$('roll').disabled=true;$('wheelModal').classList.remove('hidden');$('wheel').classList.remove('spin');$('wheelText').textContent=ps[turn].name+', pyöräytä onneasi!';$('spinBtn').classList.remove('hidden');$('spinBtn').disabled=false;$('wheelClose').classList.add('hidden')}
-function doSpin(){if(!wheelBusy)return;$('spinBtn').disabled=true;let prize=wheelPrizes[Math.floor(Math.random()*wheelPrizes.length)];$('wheel').classList.remove('spin');void $('wheel').offsetWidth;$('wheel').classList.add('spin');setTimeout(()=>{let p=ps[turn];p.money=Math.max(0,p.money+prize.value);updateTop();$('wheelText').textContent=prize.icon+' '+prize.label+'! '+(prize.value>=0?'Sait':'Menetit')+' '+Math.abs(prize.value).toLocaleString('fi-FI')+' €.';status('🎡 Onnenpyörä: '+prize.label);if(mode==='online')syncOnline();$('spinBtn').classList.add('hidden');$('wheelClose').classList.remove('hidden');winCheck();},2250)}
-function closeWheel(){$('wheelModal').classList.add('hidden');wheelBusy=false;if(started){locked=mode==='online'&&onlineSeat!==turn;$('roll').disabled=locked;status(locked?'Odotetaan '+ps[turn].name+' siirtoa…':ps[turn].name+', voit jatkaa vuoroasi!')}}
-function saveGame(){if(!started){status('Aloita peli ennen tallentamista.');return}try{localStorage.setItem('maailmalla2027save',JSON.stringify({mode,ps,turn,avatar1,avatar2}));status('💾 Peli tallennettu tähän selaimeen!')}catch(e){status('Tallennus ei onnistunut tässä selaimessa.')}}
-function loadGame(){try{let raw=localStorage.getItem('maailmalla2027save');if(!raw){status('Tallennettua peliä ei löytynyt.');return}let d=JSON.parse(raw);if(!d.ps||d.ps.length!==2)throw new Error('bad save');mode=d.mode;ps=d.ps;turn=d.turn||0;avatar1=d.avatar1||ps[0].avatar;avatar2=d.avatar2||ps[1].avatar;started=true;locked=false;wheelBusy=false;$('start').classList.add('hidden');$('setup').classList.add('hidden');$('game').classList.remove('hidden');$('modal').classList.add('hidden');$('wheelModal').classList.add('hidden');$('prison').classList.add('hidden');$('winScreen').classList.add('hidden');$('roll').disabled=false;render();updateTop();status('📂 Tallennettu peli ladattu! '+ps[turn].name+', sinun vuorosi.')}catch(e){status('Tallennusta ei voitu ladata.')}}
-function backToMenu(){$('winScreen').classList.add('hidden');$('game').classList.add('hidden');$('start').classList.remove('hidden');started=false;locked=false}
-</script></body></html>
-
-
 
 <!DOCTYPE html>
 <html lang="fi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Maailmalla 2027 🎃</title>
-  <style>
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: #151027;
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      overflow-x: hidden;
-    }
-    h1 { color: #ff8c00; }
-    #countdown {
-      font-size: 1.5rem;
-      color: #ffd166;
-      margin: 20px;
-    }
-    .bat {
-      position: fixed;
-      top: 20%;
-      left: -60px;
-      font-size: 36px;
-      pointer-events: none;
-      animation: fly 8s linear infinite;
-      z-index: 10;
-    }
-    .bat:nth-of-type(2) {
-      top: 45%;
-      animation-duration: 11s;
-      animation-delay: 2s;
-    }
-    .bat:nth-of-type(3) {
-      top: 70%;
-      animation-duration: 9s;
-      animation-delay: 4s;
-    }
-    @keyframes fly {
-      from { transform: translateX(0) translateY(0); }
-      to { transform: translateX(110vw) translateY(-40px); }
-    }
-    main {
-      max-width: 700px;
-      margin: 40px auto;
-      padding: 20px;
-    }
-    .panel {
-      padding: 20px;
-      background: #292044;
-      border-radius: 16px;
-      margin: 20px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>MAAILMALLA 2027</title>
+<style>
+:root{--bg:#170e28;--panel:#2b1b45;--edge:#825ba7;--gold:#ffca65;--orange:#ff914d;--text:#fff8ec}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#4b2862,var(--bg) 72%);color:var(--text);font-family:system-ui,Arial,sans-serif;min-height:100vh}
+button,input,select{font:inherit}
+button{background:linear-gradient(135deg,#ffd166,#ff8546);color:#28132e;border:0;border-radius:12px;padding:11px 14px;font-weight:800;cursor:pointer;margin:3px}
+button.secondary{background:#5d447f;color:white}
+button:disabled{opacity:.45}
+header{text-align:center;padding:12px}
+h1{font-size:clamp(26px,6vw,46px);margin:3px;color:var(--gold);text-shadow:0 0 18px #ff693b}
+h2{color:#ffd17b}
+.screen{display:none;max-width:1100px;margin:auto;padding:10px}
+.screen.active{display:block}
+.panel{background:#2b1b45ee;border:2px solid var(--edge);border-radius:18px;padding:14px;margin:8px auto;box-shadow:0 8px 28px #0005}
+.center{text-align:center}
+.small{font-size:12px;opacity:.8}
+.menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;max-width:750px;margin:20px auto}
+.menu button{min-height:52px}
+.stats,.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center}
+.stat{padding:9px 12px;background:#130d20;border:1px solid var(--edge);border-radius:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:9px}
+.item{background:#3b2855;border:2px solid #76549b;border-radius:13px;text-align:center;padding:10px}
+.item.selected{border-color:#ffd15a;box-shadow:0 0 14px #ffd15a55}
+.emoji{font-size:37px}
+.item button{width:100%;margin:5px 0 0}
+#board{display:grid;gap:3px;width:min(100%,850px);aspect-ratio:1/1;margin:14px auto}
+.space{min-width:0;min-height:0;border:1px solid #b08acb;background:#51366c;border-radius:7px;padding:2px;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;overflow-wrap:anywhere;font-size:clamp(7px,1.4vw,12px)}
+.space.city{background:#a95c3b;border-color:#ffc477}
+.space.special{background:#594091}
+.space .em{font-size:clamp(13px,2.7vw,25px)}
+.tokens{font-size:clamp(10px,2vw,17px);line-height:1.1}
+.centerBoard{grid-column:2 / -2;grid-row:2 / -2;border:2px solid #916ab3;border-radius:12px;background:radial-gradient(circle,#55376e,#211531);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:5px;min-width:0;min-height:0}
+.centerBoard .big{font-size:clamp(20px,5vw,56px)}
+#dice{font-size:65px;text-align:center;min-height:75px}
+#message{min-height:40px;text-align:center;padding:8px;font-weight:700}
+.progress{height:12px;background:#120b1d;border-radius:20px;overflow:hidden;margin:10px 0}
+.progress div{height:100%;background:linear-gradient(90deg,#ff7941,#ffdb60);width:0}
+#starField{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;min-height:200px;background:#120b20;border-radius:15px;padding:12px}
+.starCell{display:grid;place-items:center;font-size:31px;background:#281b41;border-radius:10px;min-height:47px}
+body.landscape #game .game-layout{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:12px;align-items:start}
+body.landscape .screen{max-width:1300px}
+@media(max-width:520px){.panel{padding:9px}#board{gap:2px}.space{padding:1px;border-radius:4px}}
+</style>
 </head>
 <body>
-  <div class="bat">🦇</div>
-  <div class="bat">🦇</div>
-  <div class="bat">🦇</div>
+<header>
+<h1>🎃 MAAILMALLA 2027 🌍</h1>
+<div class="small">Leotonttu®</div>
+</header>
 
-  <main>
-    <h1>🎃 Maailmalla 2027 🎃</h1>
-    <div class="panel">
-      <h2>Halloween-laskuri</h2>
-      <p>Halloween-tapahtumaan on aikaa:</p>
-      <div id="countdown">Lasketaan...</div>
-    </div>
+<section id="home" class="screen active">
+<div class="panel center">
+<h2>✨ Tervetuloa maailmalle!</h2>
+<p>Matkusta kaupunkeihin, kerää aarteita ja tutki kummituskartanoa.</p>
+<div class="stats">
+<div class="stat">⭐ Kolikot: <b id="homeCoins">0</b></div>
+<div class="stat">🏙️ Kaupungit: <b id="homeCities">0</b></div>
+<div class="stat">🧙 Hahmot: <b id="homeHeroes">0</b></div>
+</div>
+<div class="menu">
+<button onclick="show('setup')">🎲 Lautapeli</button>
+<button onclick="openCharacterSelect('stars')">⭐ Tähtipeli</button>
+<button onclick="openCharacterSelect('board')">🧙 Valitse hahmo</button>
+<button onclick="openShop()">🛍️ Hahmokauppa</button>
+<button onclick="openCities()">🏙️ Kaupunkikansio</button>
+<button onclick="openHalloween()">🎃 Halloween-seikkailu</button>
+<button onclick="toggleOrientation()">↔️ Vaaka / pysty</button>
+<button class="secondary" onclick="show('settings')">⚙️ Asetukset</button>
+</div>
+<p id="orientationNote" class="small">Näkymä: pystysuunta</p>
+<p class="small">Tallennus tapahtuu tämän selaimen tallennustilaan.</p>
+</div>
+</section>
 
-    <div class="panel">
-      <h2>🌍 Tervetuloa peliin!</h2>
-      <p>Maailmalla 2027</p>
-      <p>Halloween-lepakot lentävät ruudun poikki!</p>
-    </div>
-  </main>
+<section id="setup" class="screen">
+<div class="panel center">
+<h2>🎲 Lautapelin asetukset</h2>
+<p>Pelaajat:
+<select id="playerCount">
+<option value="1">1 pelaaja vastaan tietokone</option>
+<option value="2">2 pelaajaa samalla laitteella</option>
+</select></p>
+<p>Pelaaja 1: <input id="name1" maxlength="16" value="Pelaaja 1"></p>
+<p>Pelaaja 2: <input id="name2" maxlength="16" value="Pelaaja 2"></p>
+<p>Pelilaudan koko:
+<select id="boardSize">
+<option value="7">7 × 7 – pieni</option>
+<option value="8" selected>8 × 8 – keskikokoinen</option>
+<option value="9">9 × 9 – suuri</option>
+</select></p>
+<button onclick="openCharacterSelect('board')">Valitse hahmo →</button>
+<button class="secondary" onclick="show('home')">Takaisin</button>
+</div>
+</section>
 
-  <script>
-    const target = new Date("2026-10-23T15:00:00+03:00");
+<section id="characters" class="screen">
+<div class="panel">
+<h2 class="center">🧙 Valitse hahmo</h2>
+<div id="characterGrid" class="grid"></div>
+<div class="center">
+<button onclick="confirmCharacter()">Käytä valittua hahmoa</button>
+<button class="secondary" onclick="openShop()">Hahmokauppa</button>
+<button class="secondary" onclick="show('home')">Valikkoon</button>
+</div>
+</div>
+</section>
 
-    function updateCountdown() {
-      const now = new Date();
-      const diff = target - now;
-      const output = document.getElementById("countdown");
+<section id="shop" class="screen">
+<div class="panel">
+<h2 class="center">🛍️ Hahmokauppa</h2>
+<p class="center">⭐ Tähtikolikot: <b id="shopCoins">0</b></p>
+<div id="shopGrid" class="grid"></div>
+<div class="center"><button class="secondary" onclick="show('home')">Takaisin valikkoon</button></div>
+</div>
+</section>
 
-      if (diff <= 0) {
-        output.textContent = "🎃 Halloween-aika on täällä! 🦇";
-        return;
-      }
+<section id="cities" class="screen">
+<div class="panel">
+<h2 class="center">🏙️ Kaupunkien keräilykansio</h2>
+<div class="stats"><div class="stat">Kerätty: <b id="cityCount">0</b></div><div class="stat">Kaupungit: <b id="cityTotal">0</b></div></div>
+<div class="progress"><div id="cityBar"></div></div>
+<div id="cityGrid" class="grid"></div>
+<div class="center"><button class="secondary" onclick="show('home')">Takaisin valikkoon</button></div>
+</div>
+</section>
 
-      const days = Math.floor(diff / 86400000);
-      const hours = Math.floor((diff % 86400000) / 3600000);
-      const minutes = Math.floor((diff % 3600000) / 60000);
-      const seconds = Math.floor((diff % 60000) / 1000);
+<section id="game" class="screen">
+<div class="panel">
+<div class="stats">
+<div class="stat">👤 Vuoro: <b id="activeName">–</b></div>
+<div class="stat">💰 Rahat: <b id="activeMoney">0</b> €</div>
+<div class="stat">🎲 Heitot: <b id="rollCount">0/5</b></div>
+<div class="stat">⭐ Kolikot: <b id="gameCoins">0</b></div>
+</div>
+<div class="game-layout">
+<div><div id="board"></div></div>
+<div>
+<div id="dice">🎲</div>
+<div id="message">Heitä noppaa aloittaaksesi!</div>
+<div class="center">
+<button id="rollButton" onclick="rollDice()">🎲 Heitä noppaa</button>
+<button class="secondary" onclick="openCities()">🏙️ Kaupungit</button>
+<button class="secondary" onclick="openShop()">🛍️ Hahmot</button>
+<button class="secondary" onclick="returnHome()">Palaa päävalikkoon</button>
+</div>
+</div>
+</div>
+</div>
+</section>
 
-      output.textContent =
-        `${days} pv ${hours} h ${minutes} min ${seconds} s`;
-    }
+<section id="stars" class="screen">
+<div class="panel center">
+<h2>⭐ Tähtipeli</h2>
+<p>Kerää tähtiä nuolipainikkeilla tai näppäimistöllä.</p>
+<div class="stats"><div class="stat">Pisteet: <b id="starScore">0</b></div><div class="stat">Aikaa: <b id="starTime">30</b> s</div></div>
+<div id="starField"></div>
+<div class="row">
+<button onclick="moveStar(-1,0)">⬅️</button><button onclick="moveStar(1,0)">➡️</button>
+<button onclick="moveStar(0,-1)">⬆️</button><button onclick="moveStar(0,1)">⬇️</button>
+</div>
+<p id="starMessage">Paina Aloita peli.</p>
+<button onclick="startStarGame()">Aloita peli</button>
+<button class="secondary" onclick="stopStarGame();show('home')">Valikkoon</button>
+</div>
+</section>
 
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-  </script>
-</body>
-</html>
+<section id="halloween" class="screen">
+<div class="panel center">
+<h2>🎃 Kuunvarjon kartano</h2>
+<p>Herra Huurre tarvitsee apuasi! Etsi seitsemän taikaesinettä ja selvitä, miksi kartanon aika pysähtyi.</p>
+<div class="stats"><div class="stat">🔮 Esineet: <b id="hauntedFound">0/7</b></div><div class="stat">🍬 Karkit: <b id="hauntedCandy">0</b></div></div>
+<div class="item" style="margin:12px auto;max-width:600px">
+<div style="font-size:55px">🏚️ 👻 🕯️</div>
+<h3 id="hauntedRoom"></h3><p id="hauntedStory"></p>
+</div>
+<div class="row">
+<button onclick="hauntedExplore()">🔎 Tutki huonetta</button>
+<button onclick="hauntedPuzzle()">🧩 Arvoitus</button>
+<button onclick="hauntedLight()">🕯️ Lyhty</button>
+<button onclick="hauntedNext()">🚪 Seuraava huone</button>
+</div>
+<p id="hauntedMessage">Tutki huonetta löytääksesi esineitä.</p>
+<button class="secondary" onclick="show('home')">Palaa päävalikkoon</button>
+</div>
+</section>
 
+<section id="settings" class="screen">
+<div class="panel center">
+<h2>⚙️ Asetukset</h2>
+<p><button onclick="toggleOrientation()">↔️ Vaaka / pysty</button></p>
+<p><button class="secondary" onclick="toggleMotion()">✨ Vähennä animaatioita</button></p>
+<p><button class="secondary" onclick="show('home')">Takaisin</button></p>
+</div>
+</section>
 
+<script>
+const KEY="maailmalla2027_square_v3";
+const cities=[
+["Helsinki","🇫🇮"],["Rovaniemi","🎅"],["Tukholma","🇸🇪"],["Oslo","🇳🇴"],
+["Kööpenhamina","🇩🇰"],["Lontoo","🇬🇧"],["Pariisi","🇫🇷"],["Rooma","🇮🇹"],
+["Berliini","🇩🇪"],["Madrid","🇪🇸"],["Ateena","🇬🇷"],["Tokio","🇯🇵"],
+["Soul","🇰🇷"],["Peking","🇨🇳"],["Bangkok","🇹🇭"],["Singapore","🌆"],
+["Sydney","🇦🇺"],["New York","🗽"],["Rio de Janeiro","🇧🇷"],["Kairo","🏜️"],
+["Istanbul","🌉"],["Reykjavik","❄️"],["Dubai","🏙️"],["Mumbai","🚆"]
+];
+const heroes=[
+{id:"witch",name:"Noita",emoji:"🧙",price:0,rarity:"Tavallinen"},
+{id:"pumpkin",name:"Kurpitsapää",emoji:"🎃",price:0,rarity:"Tavallinen"},
+{id:"ghost",name:"Haamu",emoji:"👻",price:0,rarity:"Tavallinen"},
+{id:"bat",name:"Lepakko",emoji:"🦇",price:0,rarity:"Tavallinen"},
+{id:"vampire",name:"Vampyyri",emoji:"🧛",price:15,rarity:"Harvinainen"},
+{id:"skeleton",name:"Luuranko",emoji:"💀",price:18,rarity:"Harvinainen"},
+{id:"elf",name:"Tonttu",emoji:"🧝",price:20,rarity:"Harvinainen"},
+{id:"santa",name:"Joulupukki",emoji:"🎅",price:25,rarity:"Eeppinen"},
+{id:"snowman",name:"Lumiukko",emoji:"⛄",price:25,rarity:"Eeppinen"},
+{id:"reindeer",name:"Poro",emoji:"🦌",price:30,rarity:"Eeppinen"},
+{id:"dragon",name:"Lohikäärme",emoji:"🐉",price:50,rarity:"Legendaarinen"},
+{id:"unicorn",name:"Yksisarvinen",emoji:"🦄",price:60,rarity:"Legendaarinen"}
+];
+const specials=[
+["Lähtö","🚩","start"],["Hupi-kortti","🎉","card"],["Tähti","⭐","star"],
+["Taikaportaali","🌀","portal"],["Yllätys","🎁","event"],["Epäonnen pyörä","🎡","wheel"],
+["Verot","💸","tax"],["Lepopaikka","🏖️","rest"],["Maailmalla","🌍","card"],
+["Salainen arkku","🧰","star"],["Halloween","🎃","event"],["Haamu","👻","event"]
+];
+function freshData(){return{coins:10,owned:["witch","pumpkin","ghost","bat"],selectedHero:"witch",collectedCities:[],bestStars:0};}
+function loadData(){try{return{...freshData(),...JSON.parse(localStorage.getItem(KEY)||"{}")};}catch(e){return freshData();}}
+let data=loadData(),selectedHero=data.selectedHero,selectedMode="board";
+let players=[],current=0,rolls=0,busy=false,reduceMotion=false,boardSpaces=[],perimeter=[];
+let starTimer=null,starScore=0,starSeconds=30,starPos=0,starTarget=7;
+let haunted={room:0,found:[],candy:0};
+const hauntedRooms=[
+{title:"I – Suljettu portti",story:"Herra Huurre odottaa portilla. Etsi portin avain.",item:"🗝️ Portin avain",q:"Paljonko on 2 + 3?",a:["5"]},
+{title:"II – Unohtunut kirjasto",story:"Pölyisten kirjojen välissä on salainen viesti.",item:"📖 Taikakirja",q:"Mikä kirjain tulee A:n jälkeen?",a:["b","bee"]},
+{title:"III – Noidan työhuone",story:"Kolme ainesosaa odottaa taikapöydällä.",item:"🧪 Taikajuoma",q:"Kumpi sopii taikajuomaan: kurpitsa vai sandaali?",a:["kurpitsa"]},
+{title:"IV – Varjojen kellotorni",story:"Kello on pysähtynyt ja aika kadonnut.",item:"🕰️ Aikakristalli",q:"Kuinka monta tuntia on puolessa vuorokaudessa?",a:["12","kaksitoista"]},
+{title:"V – Peilisali",story:"Peili näyttää huoneen, jota ei näy kartassa.",item:"🪞 Varjopeili",q:"Mitä peili tavallisesti heijastaa?",a:["kuvan","heijastuksen"]},
+{title:"VI – Kielletty kellari",story:"Kellarista kuuluu hiljaista kilinää.",item:"🔔 Hopeakello",q:"Mikä esine soi, kun sitä heilautetaan?",a:["kello","hopeakello"]},
+{title:"VII – Seitsemännen avaimen sali",story:"Viimeinen sali paljastaa kartanon salaisuuden.",item:"💎 Aamunkoiton jalokivi",q:"Mikä vuorokaudenaika tulee yön jälkeen?",a:["aamu","aamunkoitto"]}
+];
+function save(){try{localStorage.setItem(KEY,JSON.stringify(data));}catch(e){}updateHome();}
+function show(id){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");updateHome();}
+function updateHome(){
+ document.getElementById("homeCoins").textContent=data.coins;
+ document.getElementById("homeCities").textContent=data.collectedCities.length;
+ document.getElementById("homeHeroes").textContent=data.owned.length;
+ const gc=document.getElementById("gameCoins");if(gc)gc.textContent=data.coins;
+}
+function toggleOrientation(){
+ document.body.classList.toggle("landscape");
+ const on=document.body.classList.contains("landscape");
+ document.getElementById("orientationNote").textContent="Näkymä: "+(on?"vaakasuunta":"pystysuunta");
+ if(screen.orientation&&screen.orientation.lock)screen.orientation.lock(on?"landscape":"portrait").catch(()=>{});
+}
+function toggleMotion(){reduceMotion=!reduceMotion;alert(reduceMotion?"Vähennetty animaatio valittu.":"Normaali animaatio valittu.");}
+function openCharacterSelect(mode){selectedMode=mode;renderCharacters();show("characters");}
+function renderCharacters(){
+ const grid=document.getElementById("characterGrid");grid.innerHTML="";
+ heroes.filter(h=>data.owned.includes(h.id)).forEach(h=>{
+  const el=document.createElement("div");el.className="item"+(selectedHero===h.id?" selected":"");
+  el.innerHTML=`<div class="emoji">${h.emoji}</div><b>${h.name}</b><p class="small">${h.rarity}</p><button class="secondary">Valitse</button>`;
+  el.querySelector("button").onclick=()=>{selectedHero=h.id;renderCharacters();};grid.appendChild(el);
+ });
+}
+function confirmCharacter(){data.selectedHero=selectedHero;save();if(selectedMode==="stars"){show("stars");startStarGame();}else startBoardGame();}
+function openShop(){
+ const grid=document.getElementById("shopGrid");grid.innerHTML="";
+ document.getElementById("shopCoins").textContent=data.coins;
+ heroes.forEach(h=>{
+  const own=data.owned.includes(h.id),el=document.createElement("div");el.className="item";
+  el.innerHTML=`<div class="emoji">${h.emoji}</div><b>${h.name}</b><p class="small">${h.rarity}</p><p>${own?"Omistuksessa":h.price+" ⭐"}</p><button ${own||data.coins<h.price?"disabled":""}>${own?"Ostettu":"Osta"}</button>`;
+  el.querySelector("button").onclick=()=>{if(own||data.coins<h.price)return;data.coins-=h.price;data.owned.push(h.id);save();openShop();};
+  grid.appendChild(el);
+ });show("shop");
+}
+function openCities(){
+ const grid=document.getElementById("cityGrid");grid.innerHTML="";
+ const got=new Set(data.collectedCities);
+ document.getElementById("cityCount").textContent=got.size;
+ document.getElementById("cityTotal").textContent=cities.length;
+ document.getElementById("cityBar").style.width=(got.size/cities.length*100)+"%";
+ cities.forEach(([name,flag])=>{
+  const yes=got.has(name),el=document.createElement("div");el.className="item"+(yes?" selected":"");
+  el.innerHTML=`<div class="emoji">${yes?flag:"🔒"}</div><b>${yes?name:"Tuntematon kaupunki"}</b><p class="small">${yes?"Kerätty":"Ei vielä löydetty"}</p>`;
+  grid.appendChild(el);
+ });show("cities");
+}
+function buildBoard(size){
+ const total=4*(size-1);boardSpaces=[];perimeter=[];
+ for(let c=0;c<size;c++)perimeter.push(c);
+ for(let r=1;r<size;r++)perimeter.push(r*size+size-1);
+ for(let c=size-2;c>=0;c--)perimeter.push((size-1)*size+c);
+ for(let r=size-2;r>=1;r--)perimeter.push(r*size);
+ for(let i=0;i<total;i++){
+  let s;
+  if(i===0)s={name:"Lähtö",emoji:"🚩",type:"start"};
+  else if(i%3===0){const city=cities[(Math.floor(i/3)-1+cities.length)%cities.length];s={name:city[0],emoji:city[1],type:"city",price:400+(i*37)%900};}
+  else{const sp=specials[(i+size)%specials.length];s={name:sp[0],emoji:sp[1],type:sp[2]};}
+  boardSpaces.push(s);
+ }
+}
+function startBoardGame(){
+ const count=Number(document.getElementById("playerCount").value||1);
+ players=[
+  {name:document.getElementById("name1").value.trim()||"Pelaaja 1",money:2500,pos:0,hero:selectedHero,owned:[],ai:false,skip:false},
+  {name:count===1?"Tietokone":(document.getElementById("name2").value.trim()||"Pelaaja 2"),money:2500,pos:0,hero:count===1?"ghost":selectedHero,owned:[],ai:count===1,skip:false}
+ ];
+ current=0;rolls=0;busy=false;
+ buildBoard(Number(document.getElementById("boardSize").value||8));
+ renderBoard();show("game");say("Peli alkaa! Heitä noppaa.");updateStats();
+}
+function renderBoard(){
+ const board=document.getElementById("board"),size=Number(document.getElementById("boardSize").value||8);
+ board.innerHTML="";board.style.gridTemplateColumns=`repeat(${size},minmax(0,1fr))`;board.style.gridTemplateRows=`repeat(${size},minmax(0,1fr))`;
+ perimeter.forEach((cellIndex,i)=>{
+  const s=boardSpaces[i],el=document.createElement("div");
+  el.className="space "+(s.type==="city"?"city":(["star","card","event","wheel","portal"].includes(s.type)?"special":""));
+  const tokens=players.filter(p=>p.pos===i).map(p=>(heroes.find(h=>h.id===p.hero)||{}).emoji||"🙂").join(" ");
+  el.style.gridColumn=String(cellIndex%size+1);el.style.gridRow=String(Math.floor(cellIndex/size)+1);
+  el.innerHTML=`<div class="em">${s.emoji}</div><b>${s.name}</b>${s.price?`<span>${s.price} €</span>`:""}<div class="tokens">${tokens}</div>`;
+  board.appendChild(el);
+ });
+ const center=document.createElement("div");center.className="centerBoard";
+ center.style.gridColumn=`2 / ${size}`;center.style.gridRow=`2 / ${size}`;
+ center.innerHTML=`<div class="big">🌍 ✨ 🎃</div><b>MAAILMALLA 2027</b><p class="small">Kerää kaupunkeja ja voita!</p><div>🏙️ 🧳 ⭐</div>`;
+ board.appendChild(center);
+}
+function updateStats(){
+ if(!players.length)return;const p=players[current];
+ document.getElementById("activeName").textContent=p.name+" "+((heroes.find(h=>h.id===p.hero)||{}).emoji||"");
+ document.getElementById("activeMoney").textContent=p.money;
+ document.getElementById("rollCount").textContent=rolls+"/5";
+ document.getElementById("gameCoins").textContent=data.coins;
+ document.getElementById("rollButton").disabled=busy||rolls>=5;
+}
+function say(t){document.getElementById("message").textContent=t;}
+function rollDice(){
+ if(busy||!players.length||rolls>=5)return;
+ busy=true;rolls++;updateStats();
+ const faces=["⚀","⚁","⚂","⚃","⚄","⚅"],result=1+Math.floor(Math.random()*6);let n=0;
+ const timer=setInterval(()=>{
+  document.getElementById("dice").textContent=faces[Math.floor(Math.random()*6)];
+  if(++n>=(reduceMotion?3:12)){clearInterval(timer);document.getElementById("dice").textContent=faces[result-1];say(players[current].name+" heitti "+result+".");setTimeout(()=>movePlayer(result),300);}
+ },reduceMotion?50:100);
+}
+function movePlayer(steps){
+ const p=players[current];let moved=0;
+ const timer=setInterval(()=>{
+  p.pos=(p.pos+1)%boardSpaces.length;
+  if(p.pos===0&&moved>0){p.money+=200;say("Lähtöruutu! +200 €");}
+  moved++;renderBoard();
+  if(moved>=steps){clearInterval(timer);busy=false;land();}
+ },reduceMotion?60:250);
+}
+function land(){
+ const p=players[current],s=boardSpaces[p.pos];
+ if(s.type==="city"){
+  if(!data.collectedCities.includes(s.name)){data.collectedCities.pus
