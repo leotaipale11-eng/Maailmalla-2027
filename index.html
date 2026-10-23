@@ -260,4 +260,49 @@ function backToMenu(){$('winScreen').classList.add('hidden');$('game').classList
 </body>
 </html>
 
+
+<style>
+  #backToMenu {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 99999;
+    padding: 12px 16px;
+    border: 2px solid #ffb347;
+    border-radius: 12px;
+    background: #32134f;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  #backToMenu:hover {
+    background: #61258a;
+  }
+</style>
+
+<button id="backToMenu" type="button">
+  🏠 Palaa päävalikkoon
+</button>
+
+<script>
+(function () {
+  const button = document.getElementById("backToMenu");
+
+  button.addEventListener("click", function () {
+    const menu = document.getElementById("mainMenu");
+    const board = document.getElementById("gameBoard");
+
+    if (menu && board) {
+      board.style.display = "none";
+      menu.style.display = "flex";
+    } else {
+      alert(
+        "Päävalikon tai pelilaudan tunnistetta ei löytynyt. Tarkista HTML-koodi."
+      );
+    }
+  });
+})();
+</script>
   
