@@ -331,6 +331,379 @@ function homeConfirm(){if(game&&!game.over){modal("Palaa päävalikkoon?","Voit 
 ]);}else showScreen("home")}
 function modal(title,text,buttons,die=false){
  $("modalTitle").textContent=title;$("modalText").textContent=text;
- $("dice") 
+ $("dice").style.display=die?"block":"none";$("dice").classList.remove("spin");
+ const b=$("modalButtons");b.replaceChildren();
+ buttons.forEach(([label,fn])=>{const el=document.createElement("button");el.textContent=label;el.onclick=fn;b.append(el)});
+ $("modal").classList.add("open");
+}
+function closeModal(){$("modal").classList.remove("open")}
+function fmt(n){return Math.round(n).toLocaleString("fi-FI")+" €"}
+function activePlayer(){return game?.players[game.current]}
 
- <html>
+function buildSpaces(n){
+ const total=4*(n-1),spaces=[];
+ const special=[
+  {type:"start",name:"LÄHTÖ",emoji:"🚩"},
+  {type:"card",name:"Hupi",emoji:"🎉"},
+  {type:"city",name:"kaupunki",emoji:"🏙️"},
+  {type:"card",name:"Maailmalla",emoji:"🌍"},
+  {type:"tax",name:"Maksu",emoji:"💸"},
+  {type:"city",name:"kaupunki",emoji:"🏙️"},
+  {type:"wheel",name:"Epäonnen pyörä",emoji:"🎡"},
+  {type:"card",name:"Hupi",emoji:"🎉"},
+  {type:"city",name:"kaupunki",emoji:"🏙️"},
+  {type:"jail",name:"Vankila",emoji:"🔒"},
+  {type:"city",name:"kaupunki",emoji:"🏙️"},
+  {type:"card",name:"Maailmalla",emoji:"🌍"},
+  {type:"star",name:"Tähti",emoji:"⭐"},
+  {type:"city",name:"kaupunki",emoji:"🏙️"},
+  {type:"event",name:"Tapahtuma",emoji:"🌦️"},
+  {type:"city",name:"kaupunki",emoji:"🏙️"},
+  {type:"rest",name:"Lepo",emoji:"🏖️"},
+  {type:"card",name:"Hupi",emoji:"🎉"},
+  {type:"city",name:"kaupunki",emoji:"🏙️"},
+  {type:"tax",name:"Matkamaksu",emoji:"💰"},
+  {type:"portal",name:"Taikaportaali",emoji:"🌀"},
+  {type:"city",name:"kaupunki",emoji:"🏙️"},
+  {type:"challenge",name:"Haaste",emoji:"🧩"},
+  {type:"city",name:"kaupunki",emoji:"🏙️"},
+  {type:"card",name:"Maailmalla",emoji:"🌍"},
+  {type:"star",name:"Tähti",emoji:"⭐"},
+  {type:"city",name:"kaupunki",emoji:"🏙️"},
+  {type:"gift",name:"Lahja",emoji:"🎁"},
+  {type:"city",name:"kaupunki",emoji:"🏙️"},
+  {type:"event",name:"Sää",emoji:"🌩️"},
+  {type:"city",name:"kaupunki",emoji:"🏙️"},
+  {type:"rest",name:"Loma",emoji:"🌴"}
+ ];
+ const positions=[];
+ for(let x=0;x<n;x++)positions.push([0,x]);
+ for(let y=1;y<n;y++)positions.push([y,n-1]);
+ for(let x=n-2;x>=0;x--)positions.push([n-1,x]);
+ for(let y=n-2;y>0;y--)positions.push([y,0]);
+ for(let i=0;i<total;i++){
+  let s={...(special[i%special.length]),index:i,cityIndex:-1,owner:null};
+  if(s.type==="city"){s.cityIndex=spaces.filter(a=>a.type==="city").length%CITIES.length;s.name=CITIES[s.cityIndex][0];s.price=CITIES[s.cityIndex][1];}
+  positions[i] && (s.pos=positions[i]);spaces.push(s);
+ }
+ return spaces;
+}
+function startBoard(){
+ const n=+$("boardSize").value;
+ const mode=$("mode").value;
+ const names=[$("name1").value.trim()||"Pelaaja 1",mode==="ai"?"Tekoäly":($("name2").value.trim()||"Pelaaja 2")];
+ const heroes=[profile.selectedHero,mode==="ai"?"ghost":(profile.selectedHero==="santa"?"astronaut":"santa")];
+ game={n,spaces:buildSpaces(n),mode,players:names.map((name,i)=>({name,money:1500,pos:0,hero:heroes[i],color:i===0?"#36a6ff":"#ff5369",jailed:0,rolls:0,turns:0,bankrupt:false})),current:0,over:false,busy:false,last:"Peli alkoi! Heitä noppaa.",lastRoll:0};
+ game.players.forEach(p=>p.pos=0);
+ showScreen("boardScreen");renderBoard();updateStats();$("gameMessage").textContent="Peli alkoi!";$("lastEvent").textContent=game.last;
+ persist();
+}
+function renderBoard(){
+ if(!game)return;
+ const b=$("board");b.replaceChildren();b.style.setProperty("--n",game.n);b.style.setProperty("--end",game.n);
+ const tiles=game.spaces;
+ tiles.forEach(s=>{
+  const d=document.createElement("div");d.className="tile "+(s.type==="city"?"city":["start","jail","rest"].includes(s.type)?"corner":"special");
+  d.style.gridRow=String(s.pos[0]+1);d.style.gridColumn=String(s.pos[1]+1);
+  const tokens=game.players.filter(p=>p.pos===s.index).map(p=>hero(p.hero).emoji).join("");
+  const owner=s.owner!==null?game.players[s.owner].color:"transparent";
+  d.innerHTML='<span class="emoji">'+s.emoji+'</span><span class="tile-name"></span><span class="tokens"></span><span class="owned"></span>';
+  d.querySelector(".tile-name").textContent=s.name;
+  d.querySelector(".tokens").textContent=tokens;
+  d.querySelector(".owned").style.background=owner;
+  d.title=s.name+(s.price?" — "+fmt(s.price):"");
+  b.append(d);
+ });
+ const center=document.createElement("div");center.className="center-board";
+ center.innerHTML='<div class="stars">✨ ⭐ ✨</div><h2>MAAILMALLA 2027</h2><div>🎃 🌍 🎁</div><small>Seikkaile ja kerää kaupunkeja!</small>';
+ b.append(center);
+ updateStats();
+}
+function updateStats(){
+ if(!game)return;
+ $("p1stat").textContent=game.players[0].name+": "+fmt(game.players[0].money)+" · "+hero(game.players[0].hero).emoji;
+ $("p2stat").textContent=game.players[1].name+": "+fmt(game.players[1].money)+" · "+hero(game.players[1].hero).emoji;
+ const p=activePlayer();
+ $("turnInfo").textContent="Vuorossa: "+p.name+(p.jailed?" · Vankila":"");
+ $("rollInfo").textContent="Noppia tällä vuorolla: "+p.rolls+"/5 · Pelatut vuorot: "+p.turns;
+ $("gameMessage").textContent=game.last;
+ const rollBtn=document.querySelector('[data-action="roll"]');
+ if(rollBtn)rollBtn.disabled=game.busy||game.over||p.rolls>=5;
+ const endBtn=document.querySelector('[data-action="endTurn"]');
+ if(endBtn)endBtn.disabled=game.busy||game.over;
+}
+function setLast(msg){if(!game)return;game.last=msg;$("lastEvent").textContent=msg;$("gameMessage").textContent=msg}
+function rollDice(){
+ if(!game||game.over||game.busy)return;
+ const p=activePlayer();
+ if(p.rolls>=5){notify("Olet käyttänyt tämän vuoron viisi heittoa.");return}
+ game.busy=true;p.rolls++;const value=1+Math.floor(Math.random()*6);game.lastRoll=value;
+ updateStats();
+ modal("Noppa pyörii!","Valmistaudu liikkumaan…",[],true);
+ $("dice").textContent="🎲";$("dice").classList.add("spin");
+ let spins=0;const spin=setInterval(()=>{$("dice").textContent=["⚀","⚁","⚂","⚃","⚄","⚅"][Math.floor(Math.random()*6)];spins++},100);
+ diceTimer=setTimeout(()=>{
+  clearInterval(spin);$("dice").classList.remove("spin");$("dice").textContent=["⚀","⚁","⚂","⚃","⚄","⚅"][value-1];
+  $("modalTitle").textContent="Sait "+value+"!";
+  $("modalText").textContent=p.name+" liikkuu "+value+" askelta.";
+  $("modalButtons").replaceChildren();setTimeout(()=>{closeModal();movePlayer(value)},650);
+ },2000);
+}
+function movePlayer(steps){
+ if(!game||game.over)return;
+ const p=activePlayer();let done=0;
+ const tick=()=>{
+  if(!game||game.over)return;
+  if(done>=steps){game.busy=false;renderBoard();landOnSpace();return}
+  const old=p.pos;p.pos=(p.pos+1)%game.spaces.length;
+  if(p.pos<old)p.money+=200;
+  done++;renderBoard();
+  moveTimer=setTimeout(tick,220);
+ };
+ tick();
+}
+function landOnSpace(){
+ if(!game||game.over)return;
+ const p=activePlayer(),s=game.spaces[p.pos];
+ switch(s.type){
+  case "start":setLast("LÄHTÖ! Saat 200 €.");p.money+=0;break;
+  case "city":landCity(s,p);return;
+  case "card":drawCard(s.name);break;
+  case "tax":changeMoney(-150,"Maksoit matkakulun 150 €.");break;
+  case "star":profile.coins+=20;persist();changeMoney(100,"Tähti! Saat 100 € ja 20 tähtikolikkoa.");break;
+  case "gift":changeMoney(250,"Lahjaruutu! Saat 250 €.");break;
+  case "rest":changeMoney(100,"Leporuutu: saat 100 €.");break;
+  case "event":drawEvent();break;
+  case "portal":changeMoney(Math.random()<.5?200:-100,"Taikaportaali siirsi sinua: yllätys!");break;
+  case "challenge":p.money+=challengeReward();setLast("Haaste onnistui! Saat palkinnon.");break;
+  case "jail":p.jailed=2;setLast("Joudut vankilaan! Menetät kaksi vuoroa.");break;
+  case "wheel":spinWheel();return;
+ }
+ finishLanding();
+}
+function landCity(s,p){
+ if(s.owner===null){
+  const msg=s.name+" maksaa "+fmt(s.price)+". Haluatko ostaa sen?";
+  if(p.money<s.price){setLast("Sinulla ei ole tarpeeksi rahaa kaupungin ostoon.");finishLanding();return}
+  modal("🏙️ "+s.name,msg,[
+   ["Osta",()=>{s.owner=game.current;p.money-=s.price;profile.collectedCities=[...new Set([...profile.collectedCities,s.name])];persist();closeModal();setLast("Ostit kaupungin "+s.name+"!");renderBoard();finishLanding()}],
+   ["En osta",()=>{closeModal();setLast("Et ostanut kaupunkia.");finishLanding()}]
+  ]);
+ }else if(s.owner!==game.current){
+  const fee=250;
+  if(p.money<fee){closeModal();endGame(game.players[s.owner].name+" voittaa! "+p.name+" ei pystynyt maksamaan 250 €.");return}
+  p.money-=fee;game.players[s.owner].money+=fee;
+  setLast(p.name+" maksoi 250 € kaupungin omistajalle.");
+  finishLanding();
+ }else{setLast("Olet omassa kaupungissasi "+s.name+".");finishLanding()}
+}
+function changeMoney(amount,msg){
+ const p=activePlayer();p.money+=amount;setLast(msg);
+ if(p.money<0){endGame(game.players[1-game.current].name+" voittaa! Rahat loppuivat.");return}
+ if(p.money>=10000){endGame(p.name+" voittaa saavuttamalla 10 000 €!");return}
+}
+function finishLanding(){
+ if(!game||game.over)return;
+ if(activePlayer().money>=10000){endGame(activePlayer().name+" voittaa!");return}
+ renderBoard();updateStats();
+ if(activePlayer().rolls>=5){setTimeout(nextTurn,650)}
+}
+function drawCard(type){
+ const cards=[
+  ["Löysit lompakon!",300],["Sait matkustajapalkinnon!",200],["Maksoit yllätysmaksun!",-200],
+  ["Sait ystävältä lahjan!",250],["Sää suosi sinua!",150],["Matkasi viivästyi!",-100],
+  ["Voitit kilpailun!",400],["Kadotit matkatavarasi!",-150]
+ ];
+ const c=cards[Math.floor(Math.random()*cards.length)];
+ changeMoney(c[1],type+": "+c[0]+" "+(c[1]>=0?"+":"")+fmt(c[1])+".");
+}
+function drawEvent(){
+ const events=[
+  ["Auringonpaiste",250],["Rankkasade",-100],["Matkailupalkinto",300],
+  ["Yllättävä maksu",-200],["Onnekas päivä",200],["Sähkökatko",-50]
+ ];
+ const e=events[Math.floor(Math.random()*events.length)];
+ changeMoney(e[1],"Säätapahtuma: "+e[0]+".");
+}
+function challengeReward(){
+ const r=+$("difficulty").value==="hard"?350:200;
+ return r;
+}
+function spinWheel(){
+ game.busy=true;
+ modal("🎡 Epäonnen pyörä","Pyörä pyörii viisi sekuntia!",[],true);
+ $("dice").textContent="🎡";$("dice").classList.add("spin");
+ diceTimer=setTimeout(()=>{
+  const outcomes=[
+   ["Onnenpotku! Saat 500 €.",()=>changeMoney(500,"Onnenpotku! Saat 500 €.")],
+   ["Maksat 250 €.",()=>changeMoney(-250,"Epäonni: menetit 250 €.")],
+   ["Erikoistehtävä! Saat 150 €.",()=>changeMoney(150,"Suoritit erikoistehtävän! +150 €.")],
+   ["Menetät seuraavan vuoron.",()=>{activePlayer().jailed=1;setLast("Pyörä määräsi ohittamaan seuraavan vuoron.")}],
+   ["Salainen yllätys! Saat tähtikolikoita.",()=>{profile.coins+=50;persist();setLast("Sait 50 tähtikolikkoa!")}]
+  ];
+  const o=outcomes[Math.floor(Math.random()*outcomes.length)];
+  closeModal();game.busy=false;o[1]();setLast(o[0]);finishLanding();
+ },5000);
+}
+function nextTurn(){
+ if(!game||game.over)return;
+ const prev=activePlayer();prev.turns++;
+ game.current=1-game.current;
+ const p=activePlayer();p.rolls=0;game.busy=false;
+ if(p.jailed>0){
+  p.jailed--;game.busy=true;
+  setLast(p.name+" on vankilassa. Jäljellä "+p.jailed+" vuoroa.");
+  renderBoard();updateStats();
+  setTimeout(()=>{if(game&&!game.over){game.busy=false;nextTurn()}},650);
+  return;
+ }
+ setLast(p.name+" vuoro alkaa.");renderBoard();updateStats();
+ if(p.name==="Tekoäly"&&game.mode==="ai"){
+  game.busy=true;updateStats();
+  setTimeout(()=>{if(game&&!game.over&&activePlayer()===p){game.busy=false;rollDice()}},900);
+ }
+}
+function endTurn(){
+ if(!game||game.over||game.busy)return;
+ nextTurn();
+}
+function endGame(msg){
+ if(!game)return;
+ game.over=true;game.busy=true;setLast(msg);renderBoard();updateStats();
+ modal("🏆 Peli päättyi!",msg,[
+  ["Uusi peli",()=>{closeModal();showScreen("setup")}],
+  ["Tallenna ja valikkoon",()=>{saveGame();closeModal();showScreen("home")}],
+  ["Valikkoon",()=>{closeModal();showScreen("home")}]
+ ]);
+}
+function saveGame(){
+ if(game){profile.savedGame=JSON.parse(JSON.stringify(game));persist();notify("Peli tallennettu tälle laitteelle!")}
+}
+function resumeGame(){
+ if(!profile.savedGame){notify("Tallennettua lautapeliä ei löytynyt.");return}
+ game=JSON.parse(JSON.stringify(profile.savedGame));game.busy=false;
+ showScreen("boardScreen");notify("Tallennettu peli avattu.");
+ if(activePlayer()?.name==="Tekoäly"&&game.mode==="ai"&&!game.over){game.busy=true;setTimeout(()=>{if(game&&!game.over){game.busy=false;rollDice()}},700)}
+}
+function renderCharacters(){
+ const grid=$("characterGrid");grid.replaceChildren();
+ CHARACTERS.filter(c=>profile.ownedHeroes.includes(c.id)).forEach(c=>{
+  const card=document.createElement("div");card.className="character"+(profile.selectedHero===c.id?" selected":"");
+  const em=document.createElement("div");em.className="emoji";em.textContent=c.emoji;
+  const title=document.createElement("h3");title.textContent=c.name;
+  const tag=document.createElement("small");tag.textContent=c.rarity+(c.season?" · "+c.season:"");
+  const btn=document.createElement("button");btn.textContent=profile.selectedHero===c.id?"✓ Valittu":"Valitse";
+  btn.disabled=profile.selectedHero===c.id;
+  btn.onclick=()=>{profile.selectedHero=c.id;persist();renderCharacters();notify("Valitsit hahmon: "+c.name)};
+  card.append(em,title,tag,btn);grid.append(card);
+ });
+}
+function currentSeason(){
+ const now=new Date();
+ return SEASONS.find(s=>now>=new Date(s.start+"T00:00:00")&&now<new Date(s.end+"T23:59:59"))||null;
+}
+function isSeasonOpen(name){
+ const s=currentSeason();return !CHARACTERS.some(c=>c.season===name)||!!s&&s.name===name;
+}
+function renderShop(){
+ const grid=$("shopGrid");grid.replaceChildren();
+ CHARACTERS.filter(c=>!profile.ownedHeroes.includes(c.id)&&c.price>0).forEach(c=>{
+  const card=document.createElement("div");card.className="character";
+  const em=document.createElement("div");em.className="emoji";em.textContent=c.emoji;
+  const title=document.createElement("h3");title.textContent=c.name;
+  const info=document.createElement("small");info.textContent=c.rarity+(c.season?" · "+c.season:"");
+  const price=document.createElement("p");price.textContent="⭐ "+c.price;
+  const btn=document.createElement("button");btn.textContent="Osta";
+  const open=!c.season||isSeasonOpen(c.season);
+  btn.disabled=profile.coins<c.price||!open;
+  if(!open)btn.textContent="🔒 Kauden ulkopuolella";
+  btn.onclick=()=>{
+   if(profile.coins<c.price)return notify("Tähtikolikoita ei ole tarpeeksi.");
+   profile.coins-=c.price;profile.ownedHeroes.push(c.id);persist();renderShop();notify("Ostit hahmon: "+c.name);
+  };
+  card.append(em,title,info,price,btn);grid.append(card);
+ });
+}
+function renderCities(){
+ $("cityCount").textContent=profile.collectedCities.length;$("cityTotal").textContent=CITIES.length;
+ $("cityProgress").style.width=(profile.collectedCities.length/CITIES.length*100)+"%";
+ const grid=$("cityGrid");grid.replaceChildren();
+ CITIES.forEach(c=>{
+  const d=document.createElement("div");d.className="collection-item";
+  const owned=profile.collectedCities.includes(c[0]);
+  d.innerHTML="<div style='font-size:28px'>"+(owned?c[2]:"🔒")+"</div>";
+  const name=document.createElement("strong");name.textContent=owned?c[0]:"Tuntematon kaupunki";
+  const price=document.createElement("p");price.textContent=owned?"✓ Kerätty":"Pelaa lautapeliä löytääksesi";
+  d.append(name,price);grid.append(d);
+ });
+}
+function renderSeasons(){
+ const list=$("seasonList");list.replaceChildren();
+ const now=new Date();
+ SEASONS.forEach(s=>{
+  const start=new Date(s.start+"T00:00:00"),end=new Date(s.end+"T23:59:59");
+  const active=now>=start&&now<=end;
+  const d=document.createElement("div");d.className="stat";
+  const h=document.createElement("h3");h.textContent=s.emoji+" "+s.name+(active?" · KÄYNNISSÄ":"");
+  const p=document.createElement("p");p.textContent="Alkaa "+start.toLocaleDateString("fi-FI")+" · Päättyy "+end.toLocaleDateString("fi-FI");
+  const timer=document.createElement("div");timer.className="timer";
+  if(active){const diff=end-now;timer.textContent="Jäljellä "+Math.max(0,Math.floor(diff/86400000))+" päivää";}
+  else if(now<start){const diff=start-now;timer.textContent="Alkaa "+Math.max(0,Math.floor(diff/86400000))+" päivän kuluttua";}
+  else timer.textContent="Kausi päättynyt";
+  d.append(h,p,timer);list.append(d);
+ });
+}
+function updateSeasonHome(){
+ const s=currentSeason();
+ if(!s){$("seasonHome").textContent="✨ Uusi kausi tulossa";return}
+ const end=new Date(s.end+"T23:59:59"),diff=Math.max(0,end-new Date());
+ const days=Math.floor(diff/86400000),hours=Math.floor(diff%86400000/3600000),mins=Math.floor(diff%3600000/60000),secs=Math.floor(diff%60000/1000);
+ $("seasonHome").textContent=s.name+" "+s.emoji+" · "+days+" pv "+hours+" h "+mins+" min "+secs+" s";
+}
+const ROOMS=[
+ {name:"I Suljettu portti",desc:"Kartanon portti on lukossa. Tutki kivistä portinpylvästä ja etsi avain.",item:"Portin avain",puzzle:"Mikä avaa lukon? Kirjoita sana AVAIN.",answer:"avain",hint:"Avain sopii lukkoon."},
+ {name:"II Unohtunut kirjasto",desc:"Kirjojen välissä on salakirjoitettu viesti: A=1, B=2, C=3. Mikä kirjain on numero 3?",item:"Salakirjan sivu",puzzle:"Mikä kirjain vastaa numeroa 3?",answer:"c",hint:"Laske A, B, C."},
+ {name:"III Noidan työhuone",desc:"Pöydällä on kolme ainesosaa. Yhdistä rohkeus, valo ja ystävällisyys.",item:"Taikajuoman pullo",puzzle:"Mikä loistaa pimeässä? Kirjoita VALO.",answer:"valo",hint:"Lyhty tuottaa sitä."},
+ {name:"IV Varjojen kellotorni",desc:"Kello näyttää pysähtyneen. Osoittimet muodostavat järjestyksen 2, 4, 6, ?",item:"Kellon hammasratas",puzzle:"Mikä numero jatkaa sarjaa 2, 4, 6, ...?",answer:"8",hint:"Lisää joka kerta kaksi."},
+ {name:"V Peilisali",desc:"Peilit näyttävät eri symboleita. Kolme tähteä muodostavat salaisen polun.",item:"Muistipeilin siru",puzzle:"Mikä on 3 + 4?",answer:"7",hint:"Laske yhteen."},
+ {name:"VI Salainen käytävä",desc:"Käytävän seinässä on vanha arvoitus: minulla on hampaat, mutta en pure. Mikä olen?",item:"Hopeinen hammasavain",puzzle:"Mikä esine sopii arvoitukseen? KAMPA.",answer:"kampa",hint:"Sillä selvitetään hiuksia."},
+ {name:"VII Seitsemännen avaimen sali",desc:"Viimeisessä salissa Herra Huurre odottaa. Selvitä salaisuus ennen aamunkoittoa.",item:"Seitsemäs taikaesine",puzzle:"Kirjoita AAMUNKOITTO avataksesi viimeisen salin.",answer:"aamunkoitto",hint:"Se tapahtuu ennen aamuaurinkoa."}
+];
+function startAdventure(){
+ adventure={room:0,found:[],visited:[0],inventory:[],candy:0,lantern:3,clues:[],done:[],difficulty:$("adventureDifficulty").value};
+ showScreen("adventurePlay");renderAdventure();
+}
+function renderAdventure(){
+ if(!adventure)return;
+ const r=ROOMS[adventure.room];
+ $("roomTitle").textContent=r.name;$("roomDescription").textContent=r.desc;
+ $("artifactCount").textContent=adventure.found.length+"/7";
+ $("candyCount").textContent=adventure.candy;$("lanternCount").textContent=adventure.lantern;
+ $("artifactProgress").style.width=(adventure.found.length/7*100)+"%";
+ $("inventory").textContent=adventure.inventory.length?adventure.inventory.join(" · "):"Taskusi ovat tyhjät.";
+ const map=$("roomMap");map.replaceChildren();
+ ROOMS.forEach((room,i)=>{
+  const btn=document.createElement("button");btn.className="room "+(!adventure.visited.includes(i)&&i>Math.max(...adventure.visited)+1?"locked":"");
+  btn.textContent=(adventure.visited.includes(i)?"✓ ":"🔒 ")+(i+1);
+  btn.title=room.name;
+  btn.disabled=!adventure.visited.includes(i)&&i>Math.max(...adventure.visited)+1;
+  btn.onclick=()=>{if(!adventure.visited.includes(i)&&i>Math.max(...adventure.visited)+1)return;adventure.room=i;renderAdventure()};
+  map.append(btn);
+ });
+}
+function exploreRoom(){
+ if(!adventure)return;
+ const r=ROOMS[adventure.room];
+ if(!adventure.found.includes(r.item)){
+  adventure.found.push(r.item);adventure.inventory.push(r.item);adventure.candy+=2;
+  adventure.lantern=Math.min(5,adventure.lantern+1);
+  if(adventure.room<ROOMS.length-1&&!adventure.visited.includes(adventure.room+1))adventure.visited.push(adventure.room+1);
+  notify("Löysit esineen: "+r.item+"!");
+ }else{adventure.candy++;notify("Löysit karkin!")}
+ renderAdventure();
+ if(adventure.found.length===7){
+  profile.coins+=100;persist();
+  modal("🌅 Kartanon salaisuus selvisi!","Löysit kaikki seitsemän taikaesinettä ja selvitit pysähtyneen ajan mysteerin. Saat 100 tähtikolikkoa!",[
+  
+
+ 
