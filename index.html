@@ -135,7 +135,7 @@ function renderLegends(){const list=$('legendList'),wins=readStore('maailmalla20
 function escapeHtml(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function closeCollectionScreens(){$('albumScreen').classList.add('hidden');$('legendScreen').classList.add('hidden')}
 function clearLegends(){if(confirm('Tyhjennetäänkö legendaaristen voittajien historia?')){try{localStorage.removeItem('maailmalla2027legends')}catch(e){}renderLegends()}}
-function setup(m){mode=m;$('start').classList.add('hidden');$('setup').classList.remove('hidden');$('redfield').classList.toggle('hidden',m!=='two');$('n1').value='Pelaaja 1';$('n2').value='Pelaaja 2'}function home(){$('setup').classList.add('hidden');$('start').classList.remove('hidden')}function rules(){alert('MAAILMALLA 2027\nHeitä noppaa ja liiku. Osta vapaita katuja. Hupi- ja Maailmalla-ruuduissa nostetaan kortti. Raha-ruuduissa voit saada jopa 1 500 €. Hahmosi näkyy nappulana. Maailmalla-korteista voi saada isoja matkailupalkintoja. Onnenpyörää voi pyöräyttää oman vuoron aikana. Kerää matkamuistoja kaupunkiruuduista ja katso legendaariset voittajat päävalikosta. Tallenna peli, niin voit ladata sen myöhemmin samassa selaimessa. Vankilassa olet 2 omaa kierrosta. Ensimmäisenä 10 000 € voittaa.')}function startGame(){let a=$('n1').value.trim()||'Pelaaja 1',b=mode==='ai'?'Maailmalla AI':mode==='single'?'Pankki':$('n2').value.trim()||'Pelaaja 2';ps=[{name:a,color:'blue',avatar:avatar1,money:1500,pos:0,owned:[],jail:0},{name:b,color:'red',avatar:mode==='ai'?'🤖':avatar2,money:1500,pos:0,owned:[],jail:0}];turn=0;started=true;$('setup').classList.add('hidden');$('game').classList.remove('hidden');render();updateTop();status('Heitä noppaa, '+a+'!');$('roll').disabled=false}
+function setup(m){mode=m;$('start').classList.add('hidden');$('setup').classList.remove('hidden');$('redfield').classList.toggle('hidden',m!=='two');$('n1').value='Pelaaja 1';$('n2').value='Pelaaja 2'}function home(){$('setup').classList.add('hidden');$('start').classList.remove('hidden')}function rules(){alert('MAAILMALLA 2027\nHeitä noppaa ja liiku. Osta vapaita katuja. Hupi- ja Maailmalla-ruuduissa nostetaan kortti. Raha-ruuduissa voit saada jopa 1 500 €. Hahmosi näkyy nappulana. Maailmalla-korteista voi saada isoja matkailupalkintoja. Onnenpyörää voi pyöräyttää oman vuoron aikana. Kerää matkamuistoja kaupunkiruuduista ja katso legendaariset voittajat päävalikosta. Tallenna peli, niin voit ladata sen myöhemmin samassa selaimessa. Vankilassa olet 2 omaa kierrosta. Ensimmäisenä 10 000 € voittaa. Kerää kaikki kaupungit talteen siun kaupunki kansioon vai mikä lie ✌🏻🙏🏻')}function startGame(){let a=$('n1').value.trim()||'Pelaaja 1',b=mode==='ai'?'Maailmalla AI':mode==='single'?'Pankki':$('n2').value.trim()||'Pelaaja 2';ps=[{name:a,color:'blue',avatar:avatar1,money:1500,pos:0,owned:[],jail:0},{name:b,color:'red',avatar:mode==='ai'?'🤖':avatar2,money:1500,pos:0,owned:[],jail:0}];turn=0;started=true;$('setup').classList.add('hidden');$('game').classList.remove('hidden');render();updateTop();status('Heitä noppaa, '+a+'!');$('roll').disabled=false}
 function render(){let b=$('board');b.innerHTML='';let coords=[];for(let c=0;c<7;c++)coords.push([0,c]);for(let r=1;r<7;r++)coords.push([r,6]);for(let c=5;c>=0;c--)coords.push([6,c]);for(let r=5;r>=1;r--)coords.push([r,0]);for(let i=0;i<24;i++){let s=spaces[i],e=document.createElement('div');e.className='tile '+(['start','jail','gotojail'].includes(s[2])?'corner ':'')+(s[2]==='hupi'?'hupi ':'')+(s[2]==='world'?'world ':'')+(s[2]==='jail'||s[2]==='gotojail'?'jail':'');e.style.gridRow=coords[i][0]+1;e.style.gridColumn=coords[i][1]+1;let owner=ps.find(p=>p.owned.includes(i));e.innerHTML=`<div class="owner" style="background:${owner?owner.color==='blue'?'#2497ff':'#ff5265':'transparent'}"></div><div class="emoji">${s[1]}</div><div>${s[0]}</div><div>${s[3]?s[3]+' €':''}</div><div class="pieces">${ps.filter(p=>p.pos===i).map(p=>`<span class="piece ${p.color}" title="${p.name}" style="width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px;border:1px solid white">${p.avatar}</span>`).join('')}</div>`;b.appendChild(e)}let c=document.createElement('div');c.className='center';c.innerHTML='<div class="stars">⭐ ✨ ⭐</div><strong>MAAILMALLA</strong><b>2027</b><div class="stars">✨ ⭐ ✨</div>';b.appendChild(c)}function updateTop(){let p=ps[turn];$('activeName').textContent=(p.color==='blue'?'🔵 ':'🔴 ')+p.name+' vuoro';$('money').textContent=p.money.toLocaleString('fi-FI')+' €'}function status(s){$('status').textContent=s}
 function roll(){if(mode==='online'&&onlineSeat!==turn){status('Odota omaa vuoroasi.');return}if(locked||$('roll').disabled)return;let p=ps[turn];if(p.jail>0){p.jail--;if(p.jail>0){status('🔒 '+p.name+' on vankilassa vielä '+p.jail+' kierrosta.');endTurn();return}status('🔓 VAPAANA!');}locked=true;$('roll').disabled=true;$('buy').classList.add('hidden');let n=0,iv=setInterval(()=>{ $('roll').textContent='🎲 '+(1+Math.floor(Math.random()*6));if(++n>9){clearInterval(iv);$('roll').textContent='🎲 HEITÄ NOPPAA';let r=1+Math.floor(Math.random()*6),old=p.pos;p.pos=(p.pos+r)%24;if(p.pos<old)p.money+=200;render();updateTop();setTimeout(()=>land(spaces[p.pos]),300)}},80)}function land(s){let p=ps[turn],idx=p.pos;if(s[2]==='property'){collectSouvenir(idx);let o=ps.find(x=>x.owned.includes(idx));if(o){status(o===p?'Oma katu!':s[0]+' kuuluu pelaajalle '+o.name+'.');endTurn()}else{pending=idx;status(s[0]+' maksaa '+s[3]+' €. Ostatko?');$('buy').classList.remove('hidden');locked=false}}else if(s[2]==='hupi'||s[2]==='world')drawCard(s[2]);else if(s[2]==='money'){let n=[100,250,500,750,1000,1500][Math.floor(Math.random()*6)];p.money+=n;updateTop();status('💰 Sait pankista '+n+' €!');winCheck();endTurn()}else if(s[2]==='give'){let o=ps[1-turn],n=Math.min(50,p.money);p.money-=n;o.money+=n;updateTop();status('💸 Annoit '+o.name+' '+n+' €!');winCheck();endTurn()}else if(s[2]==='gotojail'){p.pos=7;p.jail=2;render();showPrison(false)}else if(s[2]==='jail'){status('Vain vierailu vankilassa.');endTurn()}else{status('🚦 Ohitit ALUN!');endTurn()}}
 function buy(){if(mode==='online'&&onlineSeat!==turn)return;let p=ps[turn],s=spaces[pending];if(p.money<s[3]){status('Rahasi eivät riitä!');$('buy').classList.add('hidden');endTurn();return}p.money-=s[3];p.owned.push(pending);$('buy').classList.add('hidden');render();updateTop();status('🏠 '+s[0]+' ostettu!');winCheck();endTurn()}
@@ -261,48 +261,3 @@ function backToMenu(){$('winScreen').classList.add('hidden');$('game').classList
 </html>
 
 
-<style>
-  #backToMenu {
-    position: fixed;
-    top: 12px;
-    left: 12px;
-    z-index: 99999;
-    padding: 12px 16px;
-    border: 2px solid #ffb347;
-    border-radius: 12px;
-    background: #32134f;
-    color: white;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-
-  #backToMenu:hover {
-    background: #61258a;
-  }
-</style>
-
-<button id="backToMenu" type="button">
-  🏠 Palaa päävalikkoon
-</button>
-
-<script>
-(function () {
-  const button = document.getElementById("backToMenu");
-
-  button.addEventListener("click", function () {
-    const menu = document.getElementById("mainMenu");
-    const board = document.getElementById("gameBoard");
-
-    if (menu && board) {
-      board.style.display = "none";
-      menu.style.display = "flex";
-    } else {
-      alert(
-        "Päävalikon tai pelilaudan tunnistetta ei löytynyt. Tarkista HTML-koodi."
-      );
-    }
-  });
-})();
-</script>
-  
