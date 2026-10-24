@@ -830,6 +830,66 @@ document.addEventListener("keydown",e=>{
 window.addEventListener("beforeunload",()=>{if(game&&!game.over)saveGame()});
 updateHome();updateSeasonHome();setInterval(updateSeasonHome,1000);
 renderCities();
+function drawCard(type) {
+  if (!game || game.over) return;
+
+  const isHupi = type.toLowerCase().includes("hupi");
+
+  const cards = isHupi
+    ? [
+        { text: "🎉 Hupi! Voitit kilpailun!", money: 300 },
+        { text: "🍰 Hupi! Sait yllätyslahjan!", money: 200 },
+        { text: "🎈 Hupi! Ystäväsi antoi sinulle rahaa!", money: 150 },
+        { text: "🎭 Hupi! Hauska tapahtuma toi palkinnon!", money: 400 },
+        { text: "🧁 Hupi! Ostit herkkuja juhliin.", money: -100 },
+        { text: "🎊 Hupi! Voitit pienen arvonnan!", money: 250 }
+      ]
+    : [
+        { text: "🌍 Maailmalla! Sait matkailupalkinnon!", money: 300 },
+        { text: "✈️ Maailmalla! Löysit halvan lentolipun ja säästit!", money: 200 },
+        { text: "🏨 Maailmalla! Hotellilasku yllätti.", money: -200 },
+        { text: "🧳 Maailmalla! Löysit kadonneen matkalaukun palkkion!", money: 250 },
+        { text: "🚆 Maailmalla! Junamatka tuli kalliiksi.", money: -100 },
+        { text: "🗺️ Maailmalla! Löysit uuden matkakohteen ja sait palkinnon!", money: 400 }
+      ];
+
+  const card = cards[Math.floor(Math.random() * cards.length)];
+
+  modal(
+    isHupi ? "🎉 Hupi-kortti!" : "🌍 Maailmalla-kortti!",
+    card.text + "\n\n" +
+      (card.money >= 0
+        ? "Saat " + fmt(card.money) + "."
+        : "Maksat " + fmt(Math.abs(card.money)) + "."),
+    [
+      ["Nosta kortti ja jatka", () => {
+        closeModal();
+
+        if (!game || game.over) return;
+
+        const player = activePlayer();
+        player.money += card.money;
+
+        setLast(card.text);
+        renderBoard();
+        updateStats();
+
+        if (player.money < 0) {
+          endGame(game.players[1 - game.current].name +
+            " voittaa! " + player.name + " ei pystynyt maksamaan velkaansa.");
+          return;
+        }
+
+        if (player.money >= 10000) {
+          endGame(player.name + " voittaa saavuttamalla 10 000 €!");
+          return;
+        }
+
+        finishLanding();
+      }]
+    ]
+  );
+  }
 </script>
 </body>
 </html>
