@@ -703,7 +703,136 @@ function exploreRoom(){
  renderAdventure();
  if(adventure.found.length===7){
   profile.coins+=100;persist();
-  modal("🌅 Kartanon salaisuus selvisi!","Löysit kaikki seitsemän taikaesinettä ja selvitit pysähtyneen ajan mysteerin. Saat 100 tähtikolikkoa!",[
+  modal("🌅 Kartanon salaisuus selvisi!","Löysit kaikki seitsemän taikaesinettä ja selvitit pysähtyneen ajan mysteerin. Saat 100 tähtikolikkoa!",[ 
+   ["Pelaa uudelleen",()=>{closeModal();startAdventure()}],
+   ["Valikkoon",()=>{closeModal();showScreen("home")}]
+  ]);
+ }
+}
+function solvePuzzle(){
+ if(!adventure)return;
+ const r=ROOMS[adventure.room];
+ if(adventure.done.includes(adventure.room)){notify("Olet ratkaissut tämän huoneen arvoituksen.");return}
+ const answer=prompt(r.puzzle);
+ if(answer===null)return;
+ if(answer.trim().toLowerCase()===r.answer){
+  adventure.done.push(adventure.room);adventure.candy+=3;adventure.clues.push("Ratkaisit: "+r.name);
+  if(adventure.room<ROOMS.length-1&&!adventure.visited.includes(adventure.room+1))adventure.visited.push(adventure.room+1);
+  notify("Oikein! Sait kolme karkkia.");
+  renderAdventure();
+ }else{
+  adventure.candy=Math.max(0,adventure.candy-1);
+  notify("Ei aivan oikein. Menetit yhden karkin. Kokeile uudelleen!");
+  renderAdventure();
+ }
+}
+function useLantern(){
+ if(!adventure)return;
+ if(adventure.lantern<=0){notify("Lyhty on tyhjä. Tutki huonetta löytääksesi latauksen.");return}
+ adventure.lantern--;
+ const r=ROOMS[adventure.room];
+ modal("🏮 Lyhdyn valo",r.hint,[["Jatka",()=>{closeModal();renderAdventure()}]]);
+}
+function roomHint(){if(!adventure)return;modal("💡 Vihje",ROOMS[adventure.room].hint,[["Kiitos!",closeModal]])}
+function leaveAdventure(){
+ modal("Poistu seikkailusta?","Edistymistä ei tallenneta, kun poistut tästä seikkailusta.",[
+  ["Poistu",()=>{adventure=null;closeModal();showScreen("home")}],
+  ["Jatka",closeModal]
+ ]);
+}
+function startStar(){star={x:3,y:3,score:0,target:randomStar()};renderStar()}
+function randomStar(){return{x:Math.floor(Math.random()*7),y:Math.floor(Math.random()*7)}}
+function moveStar(dx,dy){
+ if(!star)startStar();
+ star.x=Math.max(0,Math.min(6,star.x+dx));star.y=Math.max(0,Math.min(6,star.y+dy));
+ if(star.x===star.target.x&&star.y===star.target.y){
+  star.score+=1;profile.coins+=5;
+  if(star.score>profile.bestStar)profile.bestStar=star.score;
+  star.target=randomStar();persist();notify("+1 tähti ja 5 tähtikolikkoa!");
+ }
+ renderStar();
+}
+function renderStar(){
+ if(!star)startStar();
+ $("starScore").textContent=star.score;$("starBest").textContent=profile.bestStar;
+ const field=$("starField");field.replaceChildren();
+ for(let y=0;y<7;y++)for(let x=0;x<7;x++){
+  const d=document.createElement("div");d.style.aspectRatio="1";d.style.borderRadius="5px";d.style.background="#302449";d.style.display="grid";d.style.placeItems="center";
+  d.textContent=x===star.x&&y===star.y?"🧑‍🚀":x===star.target.x&&y===star.target.y?"⭐":"";
+  field.append(d);
+ }
+}
+function orientation(){
+ document.body.classList.toggle("landscape");
+ try{if(document.body.classList.contains("landscape")&&screen.orientation?.lock)screen.orientation.lock("landscape").catch(()=>{});else screen.orientation?.unlock?.()}catch(e){}
+ notify(document.body.classList.contains("landscape")?"Vaakatilan asettelu päällä.":"Pystytilan asettelu päällä.");
+}
+function saveSettings(){
+ profile.settings={sound:$("soundSetting").value,motion:$("motionSetting").value,text:$("textSetting").value};
+ document.body.style.fontSize=profile.settings.text==="large"?"18px":"16px";
+ document.body.style.scrollBehavior=profile.settings.motion==="off"?"auto":"smooth";
+ persist();notify("Asetukset tallennettu.");
+}
+function resetConfirm(){
+ modal("Nollataanko pelitiedot?","Tämä poistaa tällä laitteella olevat pelitallennukset, hahmot ja kerätyt kaupungit.",[
+  ["Peruuta",closeModal],
+  ["Nollaa kaikki",()=>{profile=initial();game=null;adventure=null;persist();closeModal();showScreen("home");notify("Paikalliset pelitiedot nollattu.")}]
+ ]);
+}
+function handleAction(action){
+ switch(action){
+  case "home":showScreen("home");break;
+  case "homeConfirm":homeConfirm();break;
+  case "setup":showScreen("setup");break;
+  case "startBoard":startBoard();break;
+  case "roll":rollDice();break;
+  case "endTurn":endTurn();break;
+  case "save":saveGame();break;
+  case "resume":resumeGame();break;
+  case "characters":showScreen("characters");break;
+  case "shop":showScreen("shop");break;
+  case "cities":showScreen("cities");break;
+  case "seasons":showScreen("seasons");break;
+  case "settings":
+   $("soundSetting").value=profile.settings.sound;
+   $("motionSetting").value=profile.settings.motion;
+   $("textSetting").value=profile.settings.text;showScreen("settings");break;
+  case "saveSettings":saveSettings();break;
+  case "orientation":orientation();break;
+  case "adventure":showScreen("adventure");break;
+  case "startAdventure":startAdventure();break;
+  case "exploreRoom":exploreRoom();break;
+  case "useLantern":useLantern();break;
+  case "solvePuzzle":solvePuzzle();break;
+  case "roomHint":roomHint();break;
+  case "leaveAdventure":leaveAdventure();break;
+  case "starGame":star=null;startStar();showScreen("starGame");break;
+  case "startStar":startStar();break;
+  case "starUp":moveStar(0,-1);break;
+  case "starDown":moveStar(0,1);break;
+  case "starLeft":moveStar(-1,0);break;
+  case "starRight":moveStar(1,0);break;
+  case "resetConfirm":resetConfirm();break;
+ }
+}
+document.addEventListener("click",e=>{
+ const btn=e.target.closest("[data-action]");
+ if(!btn)return;
+ try{handleAction(btn.dataset.action)}catch(err){console.error(err);notify("Toiminnossa tapahtui virhe. Yritä uudelleen.")}
+});
+document.addEventListener("keydown",e=>{
+ if(!$("starGame").classList.contains("active"))return;
+ if(e.key==="ArrowUp")moveStar(0,-1);
+ if(e.key==="ArrowDown")moveStar(0,1);
+ if(e.key==="ArrowLeft")moveStar(-1,0);
+ if(e.key==="ArrowRight")moveStar(1,0);
+});
+window.addEventListener("beforeunload",()=>{if(game&&!game.over)saveGame()});
+updateHome();updateSeasonHome();setInterval(updateSeasonHome,1000);
+renderCities();
+</script>
+</body>
+</html>
   
 
  
