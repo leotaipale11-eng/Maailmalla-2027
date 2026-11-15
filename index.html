@@ -1,898 +1,417 @@
-
 <!DOCTYPE html>
 <html lang="fi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MAAILMALLA 2027</title>
-<style>
-:root{--bg:#100e24;--panel:#211c3c;--orange:#ff963d;--purple:#9a69ff;--text:#fff8ee;--muted:#c7bddc;--blue:#36a6ff;--red:#ff5369}
-*{box-sizing:border-box}
-body{margin:0;background:radial-gradient(circle at top,#382450,var(--bg) 70%);color:var(--text);font-family:system-ui,Arial,sans-serif;min-height:100vh}
-button,input,select{font:inherit}
-button{border:2px solid #ffffff25;border-radius:13px;background:linear-gradient(135deg,#a65bff,#6134b7);color:white;padding:12px 15px;font-weight:800;cursor:pointer;touch-action:manipulation;box-shadow:0 4px 0 #2c1b50}
-button:active{transform:translateY(3px);box-shadow:none}
-button.secondary{background:#37304e}
-button.orange{background:linear-gradient(135deg,#ffad45,#e75c29)}
-button:disabled{opacity:.45}
-input,select{width:100%;padding:11px;border-radius:10px;border:1px solid #786b9b;background:#18142c;color:white}
-h1,h2,h3,p{margin-top:0}
-h1{font-size:clamp(27px,7vw,48px);line-height:1.05;color:#ffb65c;text-shadow:0 3px #6e2879}
-h2{color:#ffd18b}
-small,.muted{color:var(--muted)}
-header{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;position:sticky;top:0;background:#100e24ed;z-index:5;border-bottom:1px solid #ffffff20}
-.brand{font-weight:1000;letter-spacing:1px;color:#ffc26e}
-main{max-width:1050px;margin:auto;padding:15px}
-.screen{display:none}
-.screen.active{display:block;animation:appear .22s ease}
-@keyframes appear{from{opacity:.3;transform:translateY(5px)}to{opacity:1;transform:none}}
-.panel{background:#211c3cf0;border:1px solid #ffffff20;border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 8px 25px #0003}
-.menu-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.menu-grid button{min-height:76px}
-.hero{text-align:center;padding:24px 10px 14px}
-.ghosts{font-size:clamp(27px,8vw,48px);letter-spacing:8px;animation:float 3s ease-in-out infinite}
-@keyframes float{50%{transform:translateY(-9px)}}
-#board{display:grid;gap:3px;width:min(94vw,670px);aspect-ratio:1;margin:12px auto;grid-template-columns:repeat(var(--n),minmax(0,1fr));grid-template-rows:repeat(var(--n),minmax(0,1fr))}
-.tile{position:relative;min-width:0;min-height:0;border-radius:5px;border:1px solid #ffffff50;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1px;background:#5b426d;color:white;overflow:hidden;font-size:clamp(7px,1.8vw,12px);line-height:1.05}
-.tile .emoji{font-size:clamp(13px,3.5vw,25px)}
-.tile .tile-name{overflow-wrap:anywhere}
-.tile.city{background:#416d68}
-.tile.special{background:#824c86}
-.tile.corner{background:#a75b35}
-.tile .tokens{font-size:clamp(11px,3vw,19px);white-space:nowrap}
-.tile .owned{position:absolute;bottom:1px;left:2px;right:2px;height:3px;border-radius:3px}
-.center-board{grid-column:2 / var(--end);grid-row:2 / var(--end);border-radius:12px;background:radial-gradient(circle,#382e58,#18152a);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5px;overflow:hidden}
-.center-board h2{font-size:clamp(11px,3vw,24px);margin:4px}
-.center-board .stars{font-size:clamp(15px,4vw,30px);animation:twinkle 1.5s infinite alternate}
-@keyframes twinkle{to{opacity:.4;transform:scale(.85)}}
-.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.stat{background:#171329;border-radius:10px;padding:10px}
-.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
-.row>*{flex:1}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px}
-.character,.collection-item{background:#171329;border:1px solid #ffffff24;border-radius:14px;padding:12px;text-align:center}
-.character .emoji{font-size:42px}
-.character.selected{border:2px solid #ffc26e}
-.character button{width:100%;margin-top:8px}
-.list{display:grid;gap:8px}
-.timer{font-size:20px;font-weight:900;color:#ffcf7c}
-#toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:20;background:#30254b;border:1px solid #ffffff55;padding:12px 17px;border-radius:14px;max-width:90%;display:none;text-align:center;box-shadow:0 8px 25px #0008}
-#modal{position:fixed;inset:0;background:#090715dd;z-index:15;display:none;align-items:center;justify-content:center;padding:15px}
-#modal.open{display:flex}
-.modal-box{width:min(100%,460px);background:#241d40;border:2px solid #bd85ff;border-radius:20px;padding:20px;text-align:center}
-#dice{font-size:100px;animation:none}
-.spin{animation:spin .15s linear infinite}
-@keyframes spin{to{transform:rotate(360deg) scale(1.1)}}
-.progress{height:10px;background:#171329;border-radius:8px;overflow:hidden}
-.progress div{height:100%;background:linear-gradient(90deg,#a46bff,#ffb75e);width:0}
-.room-map{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.room{min-height:65px}
-.room.locked{filter:grayscale(1);opacity:.55}
-#story{line-height:1.6}
-footer{text-align:center;padding:22px;color:#b6a6d4;font-size:12px}
-body.landscape main{max-width:1200px}
-body.landscape #board{width:min(70vw,670px)}
-@media(min-width:750px){.game-layout{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:15px;align-items:start}.menu-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:380px){main{padding:8px}.panel{padding:11px}.menu-grid button{padding:9px 5px;font-size:13px}.tile{font-size:7px}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important}}
+<style>*{box-sizing:border-box}
+body{margin:0;background:#071b35;color:#f4f8ff;font-family:Arial,sans-serif}
+button{cursor:pointer;border:0;border-radius:12px;padding:12px 16px;font-weight:bold;background:#183b60;color:white}
+button:hover{filter:brightness(1.2)}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 5%;background:#0b2748;position:sticky;top:0;z-index:5}
+.logo{font-size:21px;font-weight:900}.logo span{color:#ffd166}
+.coins{color:#ffd166;font-weight:bold}
+main{max-width:1250px;margin:auto;padding:24px}
+.screen{display:none}.screen.active{display:block}
+.hero{min-height:400px;border-radius:28px;padding:40px;background:linear-gradient(120deg,#124b73,#142c59 65%,#552d65);display:flex;align-items:center;justify-content:space-between;gap:20px;overflow:hidden}
+.hero-content{max-width:600px}.eyebrow{color:#ffe49a;font-weight:bold;letter-spacing:2px}
+h1{font-size:clamp(42px,7vw,76px);line-height:1.02;margin:20px 0}
+h1 span{color:#ffd166}.hero p{font-size:18px;line-height:1.6;color:#d6e7f8}
+.hero-buttons,.feature-pills,.option-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.primary-button{background:#ffd166;color:#182944;padding:15px 22px;font-size:16px}
+.secondary-button{background:#ffffff20;border:1px solid #ffffff55}
+.feature-pills span{background:#ffffff18;border-radius:30px;padding:9px 13px}
+.hero-art{font-size:130px;position:relative;padding:30px}
+.globe{filter:drop-shadow(0 15px 15px #0005)}
+.floating-item{position:absolute;font-size:35px}
+.item-one{top:0;right:5px}.item-two{bottom:15px;left:0}.item-three{top:15px;left:5px}.item-four{bottom:0;right:0}
+.home-grid,.minigame-grid,.character-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px;margin-top:24px}
+.home-card,.minigame-card{background:#102e50;border:1px solid #315477;padding:22px;text-align:left;min-height:135px}
+.home-card span,.minigame-card span{display:block;font-size:32px;margin-bottom:12px}
+.home-card strong,.minigame-card strong{display:block;font-size:17px}
+.home-card small,.minigame-card small{display:block;color:#b8cce0;margin-top:8px}
+.section-heading{text-align:center;margin:25px 0}
+.section-heading h2{font-size:32px}
+.section-heading p{color:#b8cce0}
+.back-button{float:left;background:#244968}
+.settings-panel{max-width:850px;margin:25px auto;background:#102e50;padding:25px;border-radius:20px}
+.setting-group{margin:24px 0}.setting-group h3{margin-bottom:12px}
+.option{background:#1b4268;border:2px solid transparent}
+.option.selected{border-color:#ffd166;background:#315779}
+.option-grid.four .option{flex:1;min-width:100px}
+.character-picker{display:flex;flex-wrap:wrap;gap:10px}
+.character-choice{font-size:28px;padding:12px;background:#1b4268}
+.character-choice.selected{outline:3px solid #ffd166}
+.start-game-button{width:100%;margin-top:20px}
+.game-header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.game-layout{display:grid;grid-template-columns:180px minmax(0,1fr) 180px;gap:15px;margin-top:20px}
+.player-panel,.game-actions{background:#102e50;padding:15px;border-radius:16px}
+.game-actions button{display:block;width:100%;margin:8px 0;text-align:left}
+.board-wrapper{min-width:0;overflow:auto;background:#0b2748;border-radius:18px;padding:12px}
+.game-board{display:grid;grid-template-columns:repeat(7,minmax(58px,1fr));grid-template-rows:repeat(7,minmax(58px,1fr));gap:5px;min-width:430px;aspect-ratio:1}
+.board-tile{background:#1b4268;border:1px solid #426887;border-radius:9px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:3px;font-size:11px}
+.board-tile .tile-icon{font-size:20px}
+.board-tile.current{outline:3px solid #ffd166}
+.board-center{grid-column:2/7;grid-row:2/7;background:linear-gradient(140deg,#154d6c,#182b53);border-radius:15px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:10px}
+.center-logo{font-size:45px}.board-center h2{margin:5px}
+#diceResult{font-size:32px;margin:8px}
+.character-card{background:#102e50;border:1px solid #315477;border-radius:16px;padding:18px;text-align:center}
+.character-card .avatar{font-size:48px}
+.character-card h3{margin:8px 0}
+.character-card p{color:#b8cce0}
+.shop-balance,.season-countdown{padding:18px;background:#173b5d;border-radius:14px;text-align:center;margin:20px 0}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.calendar-day{background:#173b5d;padding:12px 4px;text-align:center;border-radius:8px}
+.calendar-day.today{outline:2px solid #ffd166}
+#minigameArea{margin-top:25px;background:#102e50;padding:20px;border-radius:18px}
+.memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.memory-card{min-height:85px;background:#1d5275;font-size:17px;overflow-wrap:anywhere}
+.memory-card.open,.memory-card.matched{background:#d9edf7;color:#142c45}
+footer{text-align:center;color:#9db6ce;padding:25px}
+@media(max-width:800px){
+ .hero{padding:25px}.hero-art{font-size:85px}
+ .game-layout{grid-template-columns:1fr}
+ .game-header{flex-wrap:wrap}
+ .calendar-grid{grid-template-columns:repeat(7,minmax(0,1fr))}
+}
+@media(max-width:500px){
+ main{padding:12px}.hero{display:block}.hero-art{text-align:center}
+ .topbar{padding:12px}.logo{font-size:16px}
+ .memory-grid{grid-template-columns:repeat(2,1fr)}
+}
 </style>
 </head>
 <body>
-<header>
-  <div class="brand">🌍 MAALLAMALLA 2027</div>
-  <button class="secondary" data-action="home">⌂ Valikko</button>
+<header class="topbar">
+ <div class="logo">🌍 MAAILMALLA <span>2027</span></div>
+ <div class="coins">🪙 <span id="coinCount">100</span></div>
 </header>
 <main>
-<section id="home" class="screen active">
-  <div class="hero panel">
-    <div class="ghosts">🎃 👻 🦇 ✨ 👻 🎃</div>
-    <h1>MAAILMALLA<br>2027</h1>
-    <p>Seikkailuja, kaupunkeja ja yllätyksiä!</p>
-    <div id="seasonHome" class="timer"></div>
-    <small>Leotonttu®</small>
+<section id="homeScreen" class="screen active">
+ <div class="hero">
+  <div class="hero-content">
+   <div class="eyebrow">❄️ WORLD ADVENTURE · JOULUKAUSI 2027</div>
+   <h1>Maailma<br><span>odottaa sinua.</span></h1>
+   <p>Matkusta maailman ympäri, kerää hahmoja, opi uusia maita ja pelaa ystäväsi kanssa.</p>
+   <div class="hero-buttons">
+    <button class="primary-button" onclick="showScreen('setup')">🌍 Aloita seikkailu</button>
+    <button class="secondary-button" onclick="continueGame()">▶ Jatka peliä</button>
+   </div>
+   <div class="feature-pills"><span>🌎 50 kohdetta</span><span>🧑‍🚀 16 hahmoa</span><span>🎮 4 minipeliä</span></div>
   </div>
-  <div class="panel">
-    <h2>🎮 Päävalikko</h2>
-    <div class="menu-grid">
-      <button class="orange" data-action="setup">🎲 Pelaa lautapeliä</button>
-      <button data-action="characters">🧑 Valitse hahmo</button>
-      <button data-action="shop">🛍️ Hahmokauppa</button>
-      <button data-action="cities">🏙️ Kaupunkikokoelma</button>
-      <button data-action="adventure">🎃 Halloween-seikkailu</button>
-      <button data-action="starGame">⭐ Tähtiseikkailu</button>
-      <button data-action="seasons">📅 Vuodenajat</button>
-      <button data-action="settings">⚙️ Asetukset</button>
-      <button data-action="orientation">↔️ Vaihda pysty/vaaka</button>
-      <button data-action="resume">💾 Jatka tallennettua peliä</button>
-    </div>
-  </div>
-  <div class="panel">
-    <div class="stats">
-      <div class="stat">⭐ Tähtikolikot<br><strong id="homeCoins">0</strong></div>
-      <div class="stat">🧑 Valittu hahmo<br><strong id="homeHero">🧑 Pelaaja</strong></div>
-    </div>
-  </div>
+  <div class="hero-art"><div class="globe">🌍</div><div class="floating-item item-one">🎄</div><div class="floating-item item-two">✈️</div><div class="floating-item item-three">⭐</div><div class="floating-item item-four">❄️</div></div>
+ </div>
+ <div class="home-grid">
+  <button class="home-card" onclick="showScreen('minigames')"><span>🎮</span><strong>Minipelit</strong><small>Neljä erilaista peliä</small></button>
+  <button class="home-card" onclick="showScreen('characters')"><span>🧑‍🚀</span><strong>Hahmot</strong><small>Kerää kaikki 16 hahmoa</small></button>
+  <button class="home-card" onclick="showScreen('calendar')"><span>🎄</span><strong>Kalenteri</strong><small>Kuukauden yllätykset</small></button>
+  <button class="home-card" onclick="showScreen('achievements')"><span>🏆</span><strong>Saavutukset</strong><small>Katso palkintosi</small></button>
+  <button class="home-card" onclick="showScreen('shop')"><span>🛍️</span><strong>Kauppa</strong><small>Osta uusia hahmoja</small></button>
+ </div>
 </section>
-
-<section id="setup" class="screen">
-  <div class="panel">
-    <h2>🎲 Uusi lautapeli</h2>
-    <label>Pelimuoto</label>
-    <select id="mode"><option value="ai">Yksin tekoälyä vastaan</option><option value="local">Kaksi paikallista pelaajaa</option></select>
-    <label>Pelaajan 1 nimi</label><input id="name1" maxlength="18" value="Pelaaja 1">
-    <label>Pelaajan 2 nimi</label><input id="name2" maxlength="18" value="Pelaaja 2">
-    <label>Pelilaudan koko</label>
-    <select id="boardSize"><option value="7">Pieni — 7 × 7</option><option value="8" selected>Keskikokoinen — 8 × 8</option><option value="9">Suuri — 9 × 9</option></select>
-    <label>Vaikeustaso</label><select id="difficulty"><option value="easy">Helppo</option><option value="normal" selected>Tavallinen</option><option value="hard">Vaikea</option></select>
-    <p class="muted">Voita keräämällä 10 000 € tai olemalla ainoa maksukykyinen pelaaja.</p>
-    <div class="row"><button data-action="startBoard" class="orange">Aloita peli!</button><button data-action="home" class="secondary">Takaisin</button></div>
-  </div>
+<section id="setupScreen" class="screen">
+ <div class="section-heading"><button class="back-button" onclick="showScreen('home')">← Takaisin</button><h2>⚙️ Luo seikkailu</h2><p>Valitse peliasetukset.</p></div>
+ <div class="settings-panel">
+  <div class="setting-group"><h3>👥 Pelimuoto</h3><div class="option-grid">
+   <button class="option selected" data-mode="bot" onclick="selectOption(this,'mode')">🤖 Pelaaja vastaan botti</button>
+   <button class="option" data-mode="two" onclick="selectOption(this,'mode')">👥 Kaksi pelaajaa</button>
+  </div></div>
+  <div class="setting-group"><h3>🎲 Pelilaudan koko</h3><div class="option-grid four">
+   <button class="option selected" data-board="small" onclick="selectOption(this,'board')">Pieni</button>
+   <button class="option" data-board="normal" onclick="selectOption(this,'board')">Normaali</button>
+   <button class="option" data-board="large" onclick="selectOption(this,'board')">Suuri</button>
+   <button class="option" data-board="huge" onclick="selectOption(this,'board')">Valtava</button>
+  </div></div>
+  <div class="setting-group"><h3>⏱️ Pelin pituus</h3><div class="option-grid">
+   <button class="option selected" data-length="10" onclick="selectOption(this,'length')">10 kierrosta</button>
+   <button class="option" data-length="20" onclick="selectOption(this,'length')">20 kierrosta</button>
+   <button class="option" data-length="30" onclick="selectOption(this,'length')">30 kierrosta</button>
+   <button class="option" data-length="50" onclick="selectOption(this,'length')">50 kierrosta</button>
+  </div></div>
+  <div class="setting-group" id="difficultyGroup"><h3>🤖 Botin vaikeustaso</h3><div class="option-grid four">
+   <button class="option selected" data-difficulty="easy" onclick="selectOption(this,'difficulty')">Helppo</button>
+   <button class="option" data-difficulty="normal" onclick="selectOption(this,'difficulty')">Normaali</button>
+   <button class="option" data-difficulty="hard" onclick="selectOption(this,'difficulty')">Vaikea</button>
+   <button class="option" data-difficulty="master" onclick="selectOption(this,'difficulty')">Mestari</button>
+  </div></div>
+  <div class="setting-group"><h3>🧑 Valitse hahmosi</h3><div id="setupCharacterList" class="character-picker"></div></div>
+  <button class="primary-button start-game-button" onclick="startGame()">🚀 Käynnistä peli</button>
+ </div>
 </section>
-
-<section id="boardScreen" class="screen">
-  <div class="panel">
-    <div class="stats">
-      <div class="stat" id="p1stat"></div><div class="stat" id="p2stat"></div>
-    </div>
-    <p id="turnInfo" style="margin:12px 0 0"></p>
-  </div>
-  <div class="game-layout">
-    <div class="panel" style="padding:6px"><div id="board"></div></div>
-    <div>
-      <div class="panel">
-        <div class="row"><button class="orange" data-action="roll">🎲 Heitä noppaa</button><button class="secondary" data-action="endTurn">Lopeta vuoro</button></div>
-        <p id="rollInfo" style="margin-top:10px"></p>
-        <p id="gameMessage">Tervetuloa peliin!</p>
-        <div class="row"><button data-action="save">💾 Tallenna</button><button class="secondary" data-action="homeConfirm">Palaa valikkoon</button></div>
-      </div>
-      <div class="panel"><h3>🃏 Viimeisin tapahtuma</h3><p id="lastEvent">Heitä noppaa ja lähde matkaan!</p></div>
-    </div>
-  </div>
+<section id="gameScreen" class="screen">
+ <div class="game-header"><button onclick="showScreen('home')">← Valikko</button><h2>🌍 Maailmalla</h2><strong>Vuoro <span id="turnNumber">1</span></strong></div>
+ <div class="game-layout">
+  <aside class="player-panel"><h3>🏆 Pelaajat</h3><div id="playerList"></div><p>Kierros: <b id="roundDisplay">1</b></p><p>Pisteet: <b id="scoreDisplay">0</b></p></aside>
+  <div class="board-wrapper"><div id="gameBoard" class="game-board"><div id="boardCenter" class="board-center"><div class="center-logo">🌍</div><h2>MAAILMALLA</h2><p>Maailma odottaa!</p><div id="diceResult">🎲</div><button class="primary-button" id="rollButton" onclick="rollDice()">Heitä noppaa</button></div></div></div>
+  <aside class="game-actions"><h3>🎯 Toiminnot</h3><button onclick="showScreen('minigames')">🎮 Minipelit</button><button onclick="showScreen('shop')">🛍️ Kauppa</button><button onclick="showScreen('achievements')">🏆 Saavutukset</button><div id="destinationInfo"><h4>📍 Kohde</h4><p>Heitä noppaa!</p></div></aside>
+ </div>
 </section>
-
-<section id="characters" class="screen">
-  <div class="panel">
-    <h2>🧑 Valitse hahmo</h2><p class="muted">Valitse kokoelmastasi haluamasi pelihahmo.</p>
-    <div id="characterGrid" class="cards"></div>
-    <button class="secondary" data-action="home">Takaisin valikkoon</button>
-  </div>
-</section>
-
-<section id="shop" class="screen">
-  <div class="panel">
-    <h2>🛍️ Hahmokauppa</h2><p>⭐ Tähtikolikot: <strong id="shopCoins"></strong></p>
-    <p class="muted">Ostetut hahmot säilyvät tämän laitteen kokoelmassa.</p>
-    <div id="shopGrid" class="cards"></div>
-    <button class="secondary" data-action="home">Takaisin valikkoon</button>
-  </div>
-</section>
-
-<section id="cities" class="screen">
-  <div class="panel">
-    <h2>🏙️ Kaupunkikokoelma</h2>
-    <p>Kerää kaupungit lautapelistäsi!</p>
-    <div class="stats"><div class="stat">Kerätyt kaupungit<br><strong id="cityCount">0</strong></div><div class="stat">Kaikki kaupungit<br><strong id="cityTotal">0</strong></div></div>
-    <div class="progress" style="margin:12px 0"><div id="cityProgress"></div></div>
-    <div id="cityGrid" class="cards"></div>
-    <button class="secondary" data-action="home">Takaisin valikkoon</button>
-  </div>
-</section>
-
-<section id="seasons" class="screen">
-  <div class="panel">
-    <h2>📅 Vuodenajat ja tapahtumat</h2>
-    <p>Vuodenajat määräytyvät laitteen paikallisen päivämäärän mukaan.</p>
-    <div id="seasonList" class="list"></div>
-    <p class="muted">Kausikaupan tuotteet voivat vaihtua. Ostetut hahmot pysyvät kokoelmassa myös kauden jälkeen.</p>
-    <button class="secondary" data-action="home">Takaisin valikkoon</button>
-  </div>
-</section>
-
-<section id="settings" class="screen">
-  <div class="panel">
-    <h2>⚙️ Asetukset</h2>
-    <label>Äänitehosteet</label><select id="soundSetting"><option value="on">Päällä</option><option value="off">Pois</option></select>
-    <label>Animaatiot</label><select id="motionSetting"><option value="on">Päällä</option><option value="off">Vähennetty</option></select>
-    <label>Tekstin koko</label><select id="textSetting"><option value="normal">Normaali</option><option value="large">Suuri</option></select>
-    <button data-action="saveSettings">Tallenna asetukset</button>
-    <button class="secondary" data-action="home">Takaisin valikkoon</button>
-  </div>
-  <div class="panel"><h3>💾 Tallennus</h3><p>Tallennus toimii tällä laitteella ja selaimella. Selaimen tietojen poistaminen voi poistaa tallennuksen.</p><button class="secondary" data-action="resetConfirm">Nollaa paikalliset pelitiedot</button></div>
-</section>
-
-<section id="adventure" class="screen">
-  <div class="panel">
-    <div class="ghosts">👻 🕯️ 🦇</div>
-    <h1>Kuunvarjon kartano</h1>
-    <h2>Halloween 2027</h2>
-    <p id="story">Halloween-yönä 2027 saavut Kuunvarjon kartanoon. Kartanon ovet sulkeutuvat takanasi. Ystävällinen aave, Herra Huurre, kertoo seitsemän taikaesineen kadonneen. Löydä esineet ja selvitä, miksi kartanon aika on pysähtynyt ennen aamunkoittoa!</p>
-    <label>Vaikeustaso</label><select id="adventureDifficulty"><option value="easy">Helppo</option><option value="normal" selected>Tavallinen</option><option value="hard">Vaikea</option></select>
-    <button class="orange" data-action="startAdventure">Aloita kartanoseikkailu</button>
-    <button class="secondary" data-action="home">Takaisin valikkoon</button>
-  </div>
-</section>
-
-<section id="adventurePlay" class="screen">
-  <div class="panel">
-    <h2 id="roomTitle">🏚️ Kartanon eteinen</h2>
-    <p id="roomDescription"></p>
-    <div class="stats"><div class="stat">🔮 Taikaesineet<br><strong id="artifactCount">0/7</strong></div><div class="stat">🏆 Karkit<br><strong id="candyCount">0</strong></div></div>
-    <p>Lyhty: <strong id="lanternCount">3</strong> latausta</p>
-    <div class="progress"><div id="artifactProgress"></div></div>
-    <h3>🗺️ Kartanon huoneet</h3><div id="roomMap" class="room-map"></div>
-    <h3>🎒 Tavarat ja vihjeet</h3><p id="inventory">Taskusi ovat tyhjät.</p>
-    <div class="row"><button data-action="exploreRoom">🔍 Tutki huonetta</button><button data-action="useLantern">🏮 Käytä lyhtyä</button></div>
-    <div class="row"><button data-action="solvePuzzle">🧩 Ratkaise arvoitus</button><button data-action="roomHint">💡 Vihje</button></div>
-    <button class="secondary" data-action="leaveAdventure">Poistu seikkailusta</button>
-  </div>
-</section>
-
-<section id="starGame" class="screen">
-  <div class="panel" style="text-align:center">
-    <h2>⭐ Tähtiseikkailu</h2><p>Liiku nuolilla ja kerää tähtiä!</p>
-    <div class="stats"><div class="stat">Pisteet<br><strong id="starScore">0</strong></div><div class="stat">Ennätys<br><strong id="starBest">0</strong></div></div>
-    <div id="starField" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin:14px auto;max-width:420px"></div>
-    <div style="max-width:260px;margin:auto">
-      <div class="row"><button data-action="starUp">⬆️</button></div>
-      <div class="row"><button data-action="starLeft">⬅️</button><button data-action="starDown">⬇️</button><button data-action="starRight">➡️</button></div>
-    </div>
-    <button class="orange" data-action="startStar">Aloita uudestaan</button><button class="secondary" data-action="home">Takaisin valikkoon</button>
-  </div>
-</section>
-<footer>MAAILMALLA 2027 · Leotonttu®</footer>
+<section id="charactersScreen" class="screen"><div class="section-heading"><button onclick="showScreen('home')">← Takaisin</button><h2>🧑‍🚀 Hahmot</h2><p>Kerää kaikki 16 hahmoa.</p></div><div id="characterGrid" class="character-grid"></div></section>
+<section id="minigamesScreen" class="screen"><div class="section-heading"><button onclick="showScreen('home')">← Takaisin</button><h2>🎮 Minipelit</h2></div><div class="minigame-grid">
+ <button class="minigame-card" onclick="startMemoryGame()"><span>🌍</span><strong>Maailman muistipeli</strong><small>Yhdistä liput ja maat.</small></button>
+ <button class="minigame-card" onclick="startFlagQuiz()"><span>🚩</span><strong>Lipputietäjä</strong><small>Tunnista lippuja.</small></button>
+ <button class="minigame-card" onclick="startCountryQuiz()"><span>🗺️</span><strong>Maavisa</strong><small>Testaa maatietosi.</small></button>
+ <button class="minigame-card" onclick="startSpeedGame()"><span>⚡</span><strong>Pikahaaste</strong><small>Vastaa nopeasti.</small></button>
+ </div><div id="minigameArea"></div></section>
+<section id="shopScreen" class="screen"><div class="section-heading"><button onclick="showScreen('home')">← Takaisin</button><h2>🛍️ Hahmokauppa</h2></div><div class="shop-balance">🪙 Kolikot: <span id="shopCoins">100</span></div><div id="shopGrid" class="character-grid"></div></section>
+<section id="calendarScreen" class="screen"><div class="section-heading"><button onclick="showScreen('home')">← Takaisin</button><h2>📅 Maailmankalenteri</h2></div><div class="season-countdown">❄️ Seuraava vuodenaika: <strong id="seasonCountdown"></strong></div><div id="calendarGrid" class="calendar-grid"></div><div id="monthlyCharacter"></div></section>
+<section id="achievementsScreen" class="screen"><div class="section-heading"><button onclick="showScreen('home')">← Takaisin</button><h2>🏆 Saavutukset</h2></div><div id="achievementList"></div></section>
 </main>
-
-<div id="modal"><div class="modal-box"><div id="dice">🎲</div><h2 id="modalTitle">Tapahtuma</h2><p id="modalText"></p><div id="modalButtons" class="list"></div></div></div>
-<div id="toast"></div>
-
-<script>
-"use strict";
+<footer>🌍 MAAILMALLA 2027 · Maailma on täynnä seikkailuja! ❄️</footer><script>
+const destinations=[
+["🇫🇮","Helsinki","Suomi"],["🇸🇪","Tukholma","Ruotsi"],["🇳🇴","Oslo","Norja"],["🇩🇰","Kööpenhamina","Tanska"],["🇮🇸","Reykjavik","Islanti"],
+["🇬🇧","Lontoo","Iso-Britannia"],["🇫🇷","Pariisi","Ranska"],["🇩🇪","Berliini","Saksa"],["🇮🇹","Rooma","Italia"],["🇪🇸","Madrid","Espanja"],
+["🇵🇹","Lissabon","Portugali"],["🇳🇱","Amsterdam","Alankomaat"],["🇧🇪","Bryssel","Belgia"],["🇨🇭","Zürich","Sveitsi"],["🇦🇹","Wien","Itävalta"],
+["🇵🇱","Varsova","Puola"],["🇨🇿","Praha","Tšekki"],["🇬🇷","Ateena","Kreikka"],["🇹🇷","Istanbul","Turkki"],["🇪🇬","Kairo","Egypti"],
+["🇲🇦","Marrakech","Marokko"],["🇿🇦","Kapkaupunki","Etelä-Afrikka"],["🇰🇪","Nairobi","Kenia"],["🇹🇿","Zanzibar","Tansania"],["🇳🇬","Lagos","Nigeria"],
+["🇯🇵","Tokio","Japani"],["🇨🇳","Peking","Kiina"],["🇰🇷","Soul","Etelä-Korea"],["🇹🇭","Bangkok","Thaimaa"],["🇻🇳","Hanoi","Vietnam"],
+["🇮🇳","Mumbai","Intia"],["🇸🇬","Singapore","Singapore"],["🇮🇩","Bali","Indonesia"],["🇦🇺","Sydney","Australia"],["🇳🇿","Auckland","Uusi-Seelanti"],
+["🇺🇸","New York","Yhdysvallat"],["🇺🇸","Los Angeles","Yhdysvallat"],["🇨🇦","Toronto","Kanada"],["🇲🇽","México","Meksiko"],["🇧🇷","Rio de Janeiro","Brasilia"],
+["🇦🇷","Buenos Aires","Argentiina"],["🇨🇱","Santiago","Chile"],["🇵🇪","Lima","Peru"],["🇨🇴","Bogotá","Kolumbia"],["🇨🇷","San José","Costa Rica"],
+["🇫🇯","Suva","Fidži"],["🇵🇭","Manila","Filippiinit"],["🇵🇰","Islamabad","Pakistan"],["🇸🇦","Riad","Saudi-Arabia"],["🇦🇪","Dubai","Arabiemiirikunnat"]
+];
+const characters=[
+["🧑‍🚀","Astronautti",0],["🧙","Velho",0],["🐨","Koala",0],["🐯","Tiikeri",0],
+["🤖","Robotti",0],["🦄","Yksisarvinen",0],["🦊","Napakettu",0],["🎅","Joulupukki",0],
+["🐼","Panda",100],["🐸","Sammakko",120],["🦁","Leijona",130],["🐧","Pingviini",140],
+["🧛","Vampyyri",150],["🧝","Tonttu",160],["🐲","Lohikäärme",180],["👑","Kuninkaallinen",200]
+];
+let coins=100,owned=[0,1,2,3,4,5,6,7],selectedCharacter=0;
+let settings={mode:"bot",board:"small",length:10,difficulty:"easy"};
+let players=[],turn=0,round=1,gameActive=false,tiles=[],tileCount=20;
+let score=0,achievements=[];
 const $=id=>document.getElementById(id);
-const STORAGE="maailmalla2027_save_v3";
-const CITIES=[
- ["Helsinki",350,"🇫🇮"],["Tukholma",400,"🇸🇪"],["Oslo",420,"🇳🇴"],
- ["Kööpenhamina",450,"🇩🇰"],["Tallinna",300,"🇪🇪"],["Riika",320,"🇱🇻"],
- ["Berliini",500,"🇩🇪"],["Pariisi",650,"🇫🇷"],["Lontoo",600,"🇬🇧"],
- ["Rooma",550,"🇮🇹"],["Madrid",500,"🇪🇸"],["Ateena",420,"🇬🇷"],
- ["Tokio",800,"🇯🇵"],["New York",850,"🇺🇸"],["Sydney",750,"🇦🇺"],
- ["Reykjavik",480,"🇮🇸"],["Praha",390,"🇨🇿"],["Dublin",470,"🇮🇪"]
-];
-const CHARACTERS=[
- {id:"basic",name:"Peruspelaaja",emoji:"🧑",price:0,rarity:"Perus"},
- {id:"boy",name:"Poika",emoji:"👦",price:0,rarity:"Perus"},
- {id:"girl",name:"Tyttö",emoji:"👧",price:0,rarity:"Perus"},
- {id:"explorer",name:"Seikkailija",emoji:"🧭",price:0,rarity:"Perus"},
- {id:"robot",name:"Robotti",emoji:"🤖",price:0,rarity:"Perus"},
- {id:"cat",name:"Kissa",emoji:"🐱",price:0,rarity:"Perus"},
- {id:"dog",name:"Koira",emoji:"🐶",price:0,rarity:"Perus"},
- {id:"fox",name:"Kettu",emoji:"🦊",price:0,rarity:"Perus"},
- {id:"panda",name:"Panda",emoji:"🐼",price:0,rarity:"Perus"},
- {id:"penguin",name:"Pingviini",emoji:"🐧",price:0,rarity:"Perus"},
- {id:"astronaut",name:"Avaruushahmo",emoji:"👨‍🚀",price:0,rarity:"Perus"},
- {id:"santa",name:"Joulupukki",emoji:"🎅",price:0,rarity:"Perus"},
- {id:"teacher",name:"Opettaja",emoji:"👩‍🏫",price:0,rarity:"Perus"},
- {id:"pumpkin",name:"Kurpitsapää",emoji:"🎃",price:120,rarity:"Harvinainen",season:"Halloween"},
- {id:"ghost",name:"Aave",emoji:"👻",price:120,rarity:"Harvinainen",season:"Halloween"},
- {id:"witch",name:"Noita",emoji:"🧙",price:200,rarity:"Eepinen",season:"Halloween"},
- {id:"vampire",name:"Vampyyri",emoji:"🧛",price:250,rarity:"Eepinen",season:"Halloween"},
- {id:"skeleton",name:"Luuranko",emoji:"💀",price:180,rarity:"Harvinainen",season:"Halloween"},
- {id:"bat",name:"Lepakko",emoji:"🦇",price:220,rarity:"Eepinen",season:"Halloween"},
- {id:"elf",name:"Tonttu",emoji:"🧝",price:150,rarity:"Harvinainen",season:"Joulu"},
- {id:"snowman",name:"Lumiukko",emoji:"⛄",price:180,rarity:"Harvinainen",season:"Joulu"},
- {id:"reindeer",name:"Poro",emoji:"🦌",price:250,rarity:"Eepinen",season:"Joulu"},
- {id:"unicorn",name:"Yksisarvinen",emoji:"🦄",price:350,rarity:"Legendaarinen"},
- {id:"dragon",name:"Lohikäärme",emoji:"🐉",price:450,rarity:"Legendaarinen"},
- {id:"alien",name:"Avaruusolento",emoji:"👽",price:300,rarity:"Eepinen"},
- {id:"wizard",name:"Velho",emoji:"🧙‍♂️",price:350,rarity:"Eepinen"},
- {id:"mermaid",name:"Merenneito",emoji:"🧜‍♀️",price:400,rarity:"Legendaarinen"},
- {id:"sun",name:"Aurinkosankari",emoji:"🌞",price:180,rarity:"Harvinainen",season:"Kesä"},
- {id:"bunny",name:"Pääsiäispupu",emoji:"🐰",price:180,rarity:"Harvinainen",season:"Pääsiäinen"},
- {id:"heart",name:"Ystävyyshahmo",emoji:"💝",price:180,rarity:"Harvinainen",season:"Ystävänpäivä"}
-];
-const SEASONS=[
- {name:"Halloween",start:"2026-01-01",end:"2026-11-04",emoji:"🎃"},
- {name:"Joulu",start:"2026-11-04",end:"2026-12-26",emoji:"🎄"},
- {name:"Uusivuosi",start:"2026-12-26",end:"2027-01-03",emoji:"🎆"},
- {name:"Ystävänpäivä",start:"2027-01-03",end:"2027-02-17",emoji:"💝"},
- {name:"Kesä",start:"2027-02-17",end:"2027-08-20",emoji:"☀️"},
- {name:"Halloween",start:"2027-08-20",end:"2027-11-04",emoji:"🎃"},
- {name:"Joulu",start:"2027-11-04",end:"2027-12-26",emoji:"🎄"}
-];
-const initial=()=>({
- coins:300,ownedHeroes:["basic","boy","girl","explorer","robot","cat","dog","fox","panda","penguin","astronaut","santa","teacher"],
- selectedHero:"basic",collectedCities:[],savedGame:null,bestStar:0,settings:{sound:"on",motion:"on",text:"normal"}
-});
-let profile=initial();
-try{const raw=localStorage.getItem(STORAGE);if(raw)profile={...profile,...JSON.parse(raw)};}catch(e){}
-let game=null, adventure=null, star=null, toastTimer=null, diceTimer=null, moveTimer=null;
-function persist(){try{localStorage.setItem(STORAGE,JSON.stringify(profile));}catch(e){}updateHome();}
-function updateHome(){
- $("homeCoins").textContent=profile.coins;$("homeHero").textContent=hero(profile.selectedHero).emoji+" "+hero(profile.selectedHero).name;
- $("shopCoins").textContent=profile.coins;
+function saveGame(){localStorage.setItem("maailmallaSave",JSON.stringify({coins,owned,selectedCharacter,settings,players,turn,round,score,gameActive}))}
+function loadGame(){try{let s=JSON.parse(localStorage.getItem("maailmallaSave"));if(!s)return;coins=s.coins??100;owned=s.owned??owned;selectedCharacter=s.selectedCharacter??0;settings=s.settings??settings;players=s.players??[];turn=s.turn??0;round=s.round??1;score=s.score??0;gameActive=s.gameActive??false}catch(e){}}
+function showScreen(name){
+ document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
+ const el=$(name+"Screen");if(el)el.classList.add("active");
+ if(name==="characters")renderCharacters();
+ if(name==="shop")renderShop();
+ if(name==="calendar")renderCalendar();
+ if(name==="achievements")renderAchievements();
+ if(name==="setup")renderCharacterPicker();
 }
-function hero(id){return CHARACTERS.find(x=>x.id===id)||CHARACTERS[0]}
-function notify(text){const t=$("toast");t.textContent=text;t.style.display="block";clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.style.display="none",2700)}
-function showScreen(id){
- document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id===id));
- window.scrollTo({top:0,behavior:profile.settings.motion==="off"?"auto":"smooth"});
- if(id==="home")updateHome();
- if(id==="characters")renderCharacters();
- if(id==="shop")renderShop();
- if(id==="cities")renderCities();
- if(id==="seasons")renderSeasons();
- if(id==="boardScreen")renderBoard();
- if(id==="adventurePlay")renderAdventure();
- if(id==="starGame")renderStar();
+function selectOption(button,type){
+ button.parentElement.querySelectorAll(".option").forEach(x=>x.classList.remove("selected"));
+ button.classList.add("selected");
+ if(type==="mode")settings.mode=button.dataset.mode;
+ if(type==="board")settings.board=button.dataset.board;
+ if(type==="length")settings.length=Number(button.dataset.length);
+ if(type==="difficulty")settings.difficulty=button.dataset.difficulty;
+ if(type==="mode")$("difficultyGroup").style.display=settings.mode==="bot"?"block":"none";
 }
-function homeConfirm(){if(game&&!game.over){modal("Palaa päävalikkoon?","Voit jatkaa myöhemmin, jos tallennat pelin.",[
- ["Tallenna ja palaa",()=>{saveGame();closeModal();showScreen("home")}],
- ["Palaa tallentamatta",()=>{closeModal();showScreen("home")}],
- ["Jatka peliä",closeModal]
-]);}else showScreen("home")}
-function modal(title,text,buttons,die=false){
- $("modalTitle").textContent=title;$("modalText").textContent=text;
- $("dice").style.display=die?"block":"none";$("dice").classList.remove("spin");
- const b=$("modalButtons");b.replaceChildren();
- buttons.forEach(([label,fn])=>{const el=document.createElement("button");el.textContent=label;el.onclick=fn;b.append(el)});
- $("modal").classList.add("open");
+function renderCharacterPicker(){
+ $("setupCharacterList").innerHTML=characters.map((c,i)=>`<button class="character-choice ${i===selectedCharacter?"selected":""}" onclick="chooseCharacter(${i})" title="${c[1]}">${c[0]}</button>`).join("");
 }
-function closeModal(){$("modal").classList.remove("open")}
-function fmt(n){return Math.round(n).toLocaleString("fi-FI")+" €"}
-function activePlayer(){return game?.players[game.current]}
-
-function buildSpaces(n){
- const total=4*(n-1),spaces=[];
- const special=[
-  {type:"start",name:"LÄHTÖ",emoji:"🚩"},
-  {type:"card",name:"Hupi",emoji:"🎉"},
-  {type:"city",name:"kaupunki",emoji:"🏙️"},
-  {type:"card",name:"Maailmalla",emoji:"🌍"},
-  {type:"tax",name:"Maksu",emoji:"💸"},
-  {type:"city",name:"kaupunki",emoji:"🏙️"},
-  {type:"wheel",name:"Epäonnen pyörä",emoji:"🎡"},
-  {type:"card",name:"Hupi",emoji:"🎉"},
-  {type:"city",name:"kaupunki",emoji:"🏙️"},
-  {type:"jail",name:"Vankila",emoji:"🔒"},
-  {type:"city",name:"kaupunki",emoji:"🏙️"},
-  {type:"card",name:"Maailmalla",emoji:"🌍"},
-  {type:"star",name:"Tähti",emoji:"⭐"},
-  {type:"city",name:"kaupunki",emoji:"🏙️"},
-  {type:"event",name:"Tapahtuma",emoji:"🌦️"},
-  {type:"city",name:"kaupunki",emoji:"🏙️"},
-  {type:"rest",name:"Lepo",emoji:"🏖️"},
-  {type:"card",name:"Hupi",emoji:"🎉"},
-  {type:"city",name:"kaupunki",emoji:"🏙️"},
-  {type:"tax",name:"Matkamaksu",emoji:"💰"},
-  {type:"portal",name:"Taikaportaali",emoji:"🌀"},
-  {type:"city",name:"kaupunki",emoji:"🏙️"},
-  {type:"challenge",name:"Haaste",emoji:"🧩"},
-  {type:"city",name:"kaupunki",emoji:"🏙️"},
-  {type:"card",name:"Maailmalla",emoji:"🌍"},
-  {type:"star",name:"Tähti",emoji:"⭐"},
-  {type:"city",name:"kaupunki",emoji:"🏙️"},
-  {type:"gift",name:"Lahja",emoji:"🎁"},
-  {type:"city",name:"kaupunki",emoji:"🏙️"},
-  {type:"event",name:"Sää",emoji:"🌩️"},
-  {type:"city",name:"kaupunki",emoji:"🏙️"},
-  {type:"rest",name:"Loma",emoji:"🌴"}
- ];
- const positions=[];
- for(let x=0;x<n;x++)positions.push([0,x]);
- for(let y=1;y<n;y++)positions.push([y,n-1]);
- for(let x=n-2;x>=0;x--)positions.push([n-1,x]);
- for(let y=n-2;y>0;y--)positions.push([y,0]);
- for(let i=0;i<total;i++){
-  let s={...(special[i%special.length]),index:i,cityIndex:-1,owner:null};
-  if(s.type==="city"){s.cityIndex=spaces.filter(a=>a.type==="city").length%CITIES.length;s.name=CITIES[s.cityIndex][0];s.price=CITIES[s.cityIndex][1];}
-  positions[i] && (s.pos=positions[i]);spaces.push(s);
- }
- return spaces;
+function chooseCharacter(i){if(!owned.includes(i)){alert("Tämä hahmo pitää ensin ostaa kaupasta.");return}selectedCharacter=i;renderCharacterPicker()}
+function startGame(){
+ const count={small:20,normal:28,large:36,huge:48}[settings.board];
+ tileCount=count;
+ players=[{name:"Pelaaja 1",char:characters[selectedCharacter][0],pos:0,score:0}];
+ if(settings.mode==="two")players.push({name:"Pelaaja 2",char:"🐧",pos:0,score:0});
+ else players.push({name:"Botti",char:"🤖",pos:0,score:0});
+ turn=0;round=1;score=0;gameActive=true;
+ createBoard();renderPlayers();updateGame();showScreen("game");saveGame();
 }
-function startBoard(){
- const n=+$("boardSize").value;
- const mode=$("mode").value;
- const names=[$("name1").value.trim()||"Pelaaja 1",mode==="ai"?"Tekoäly":($("name2").value.trim()||"Pelaaja 2")];
- const heroes=[profile.selectedHero,mode==="ai"?"ghost":(profile.selectedHero==="santa"?"astronaut":"santa")];
- game={n,spaces:buildSpaces(n),mode,players:names.map((name,i)=>({name,money:1500,pos:0,hero:heroes[i],color:i===0?"#36a6ff":"#ff5369",jailed:0,rolls:0,turns:0,bankrupt:false})),current:0,over:false,busy:false,last:"Peli alkoi! Heitä noppaa.",lastRoll:0};
- game.players.forEach(p=>p.pos=0);
- showScreen("boardScreen");renderBoard();updateStats();$("gameMessage").textContent="Peli alkoi!";$("lastEvent").textContent=game.last;
- persist();
-}
-function renderBoard(){
- if(!game)return;
- const b=$("board");b.replaceChildren();b.style.setProperty("--n",game.n);b.style.setProperty("--end",game.n);
- const tiles=game.spaces;
- tiles.forEach(s=>{
-  const d=document.createElement("div");d.className="tile "+(s.type==="city"?"city":["start","jail","rest"].includes(s.type)?"corner":"special");
-  d.style.gridRow=String(s.pos[0]+1);d.style.gridColumn=String(s.pos[1]+1);
-  const tokens=game.players.filter(p=>p.pos===s.index).map(p=>hero(p.hero).emoji).join("");
-  const owner=s.owner!==null?game.players[s.owner].color:"transparent";
-  d.innerHTML='<span class="emoji">'+s.emoji+'</span><span class="tile-name"></span><span class="tokens"></span><span class="owned"></span>';
-  d.querySelector(".tile-name").textContent=s.name;
-  d.querySelector(".tokens").textContent=tokens;
-  d.querySelector(".owned").style.background=owner;
-  d.title=s.name+(s.price?" — "+fmt(s.price):"");
-  b.append(d);
+function createBoard(){
+ const board=$("gameBoard");board.innerHTML="";
+ const n=7,coords=[];
+ for(let c=0;c<n;c++)coords.push([0,c]);
+ for(let r=1;r<n;r++)coords.push([r,n-1]);
+ for(let c=n-2;c>=0;c--)coords.push([n-1,c]);
+ for(let r=n-2;r>0;r--)coords.push([r,0]);
+ const chosen=destinations.slice(0,tileCount);
+ tiles=Array.from({length:coords.length},(_,i)=>chosen[i%chosen.length]);
+ coords.forEach(([r,c],i)=>{
+  const d=document.createElement("div");d.className="board-tile";d.id="tile"+i;
+  d.style.gridRow=r+1;d.style.gridColumn=c+1;
+  d.innerHTML=`<span class="tile-icon">${tiles[i][0]}</span><b>${tiles[i][1]}</b><span>${tiles[i][2]}</span>`;
+  board.appendChild(d);
  });
- const center=document.createElement("div");center.className="center-board";
- center.innerHTML='<div class="stars">✨ ⭐ ✨</div><h2>MAAILMALLA 2027</h2><div>🎃 🌍 🎁</div><small>Seikkaile ja kerää kaupunkeja!</small>';
- b.append(center);
- updateStats();
+ const center=document.createElement("div");center.id="boardCenter";center.className="board-center";
+ center.innerHTML='<div class="center-logo">🌍</div><h2>MAAILMALLA</h2><p>Maailma odottaa!</p><div id="diceResult">🎲</div><button class="primary-button" id="rollButton" onclick="rollDice()">Heitä noppaa</button>';
+ board.appendChild(center);
 }
-function updateStats(){
- if(!game)return;
- $("p1stat").textContent=game.players[0].name+": "+fmt(game.players[0].money)+" · "+hero(game.players[0].hero).emoji;
- $("p2stat").textContent=game.players[1].name+": "+fmt(game.players[1].money)+" · "+hero(game.players[1].hero).emoji;
- const p=activePlayer();
- $("turnInfo").textContent="Vuorossa: "+p.name+(p.jailed?" · Vankila":"");
- $("rollInfo").textContent="Noppia tällä vuorolla: "+p.rolls+"/5 · Pelatut vuorot: "+p.turns;
- $("gameMessage").textContent=game.last;
- const rollBtn=document.querySelector('[data-action="roll"]');
- if(rollBtn)rollBtn.disabled=game.busy||game.over||p.rolls>=5;
- const endBtn=document.querySelector('[data-action="endTurn"]');
- if(endBtn)endBtn.disabled=game.busy||game.over;
+function renderPlayers(){
+ $("playerList").innerHTML=players.map((p,i)=>`<p>${p.char} <b>${p.name}</b><br>📍 Ruutu ${p.pos+1} · ⭐ ${p.score}</p>`).join("");
 }
-function setLast(msg){if(!game)return;game.last=msg;$("lastEvent").textContent=msg;$("gameMessage").textContent=msg}
+function updateGame(){
+ $("turnNumber").textContent=round;$("roundDisplay").textContent=round;
+ $("scoreDisplay").textContent=players[0]?.score??0;
+ $("coinCount").textContent=coins;
+ document.querySelectorAll(".board-tile").forEach(x=>x.classList.remove("current"));
+ players.forEach(p=>{const t=$("tile"+p.pos);if(t)t.classList.add("current")});
+ $("destinationInfo").innerHTML=`<h4>📍 Kohde</h4><p>${tiles[players[turn].pos]?.[0]??""} ${tiles[players[turn].pos]?.[1]??""}</p>`;
+ renderPlayers();saveGame();
+}
 function rollDice(){
- if(!game||game.over||game.busy)return;
- const p=activePlayer();
- if(p.rolls>=5){notify("Olet käyttänyt tämän vuoron viisi heittoa.");return}
- game.busy=true;p.rolls++;const value=1+Math.floor(Math.random()*6);game.lastRoll=value;
- updateStats();
- modal("Noppa pyörii!","Valmistaudu liikkumaan…",[],true);
- $("dice").textContent="🎲";$("dice").classList.add("spin");
- let spins=0;const spin=setInterval(()=>{$("dice").textContent=["⚀","⚁","⚂","⚃","⚄","⚅"][Math.floor(Math.random()*6)];spins++},100);
- diceTimer=setTimeout(()=>{
-  clearInterval(spin);$("dice").classList.remove("spin");$("dice").textContent=["⚀","⚁","⚂","⚃","⚄","⚅"][value-1];
-  $("modalTitle").textContent="Sait "+value+"!";
-  $("modalText").textContent=p.name+" liikkuu "+value+" askelta.";
-  $("modalButtons").replaceChildren();setTimeout(()=>{closeModal();movePlayer(value)},650);
- },2000);
+ if(!gameActive)return;
+ const p=players[turn],dice=Math.floor(Math.random()*6)+1;
+ $("diceResult").textContent="🎲 "+dice;
+ p.pos=(p.pos+dice)%tileCount;
+ p.score+=10;coins+=5;score+=10;
+ const dest=tiles[p.pos];
+ $("destinationInfo").innerHTML=`<h4>📍 ${dest[0]} ${dest[1]}</h4><p>${dest[2]}</p><p>+10 pistettä ja +5 kolikkoa!</p>`;
+ renderPlayers();updateGame();
+ if(p.pos===0){round++;if(round>settings.length){endGame();return}}
+ turn=(turn+1)%players.length;
+ if(settings.mode==="bot"&&turn===1){$("rollButton").disabled=true;setTimeout(botTurn,800)}else $("rollButton").disabled=false;
+ updateGame();
 }
-function movePlayer(steps){
- if(!game||game.over)return;
- const p=activePlayer();let done=0;
- const tick=()=>{
-  if(!game||game.over)return;
-  if(done>=steps){game.busy=false;renderBoard();landOnSpace();return}
-  const old=p.pos;p.pos=(p.pos+1)%game.spaces.length;
-  if(p.pos<old)p.money+=200;
-  done++;renderBoard();
-  moveTimer=setTimeout(tick,220);
- };
- tick();
+function botTurn(){
+ if(!gameActive)return;
+ const p=players[1],dice=Math.floor(Math.random()*6)+1;
+ p.pos=(p.pos+dice)%tileCount;p.score+=10;
+ $("diceResult").textContent="🤖 Botti heitti "+dice;
+ turn=0;if(p.pos===0)round++;
+ if(round>settings.length){endGame();return}
+ $("rollButton").disabled=false;updateGame();
 }
-function landOnSpace(){
- if(!game||game.over)return;
- const p=activePlayer(),s=game.spaces[p.pos];
- switch(s.type){
-  case "start":setLast("LÄHTÖ! Saat 200 €.");p.money+=0;break;
-  case "city":landCity(s,p);return;
-  case "card":drawCard(s.name);break;
-  case "tax":changeMoney(-150,"Maksoit matkakulun 150 €.");break;
-  case "star":profile.coins+=20;persist();changeMoney(100,"Tähti! Saat 100 € ja 20 tähtikolikkoa.");break;
-  case "gift":changeMoney(250,"Lahjaruutu! Saat 250 €.");break;
-  case "rest":changeMoney(100,"Leporuutu: saat 100 €.");break;
-  case "event":drawEvent();break;
-  case "portal":changeMoney(Math.random()<.5?200:-100,"Taikaportaali siirsi sinua: yllätys!");break;
-  case "challenge":p.money+=challengeReward();setLast("Haaste onnistui! Saat palkinnon.");break;
-  case "jail":p.jailed=2;setLast("Joudut vankilaan! Menetät kaksi vuoroa.");break;
-  case "wheel":spinWheel();return;
- }
- finishLanding();
+function endGame(){
+ gameActive=false;
+ const winner=[...players].sort((a,b)=>b.score-a.score)[0];
+ $("boardCenter").innerHTML=`<div class="center-logo">🏆</div><h2>Peli päättyi!</h2><h3>${winner.name} voitti!</h3><p>Pisteet: ${winner.score}</p><button class="primary-button" onclick="showScreen('home')">Valikkoon</button>`;
+ saveGame();
 }
-function landCity(s,p){
- if(s.owner===null){
-  const msg=s.name+" maksaa "+fmt(s.price)+". Haluatko ostaa sen?";
-  if(p.money<s.price){setLast("Sinulla ei ole tarpeeksi rahaa kaupungin ostoon.");finishLanding();return}
-  modal("🏙️ "+s.name,msg,[
-   ["Osta",()=>{s.owner=game.current;p.money-=s.price;profile.collectedCities=[...new Set([...profile.collectedCities,s.name])];persist();closeModal();setLast("Ostit kaupungin "+s.name+"!");renderBoard();finishLanding()}],
-   ["En osta",()=>{closeModal();setLast("Et ostanut kaupunkia.");finishLanding()}]
-  ]);
- }else if(s.owner!==game.current){
-  const fee=250;
-  if(p.money<fee){closeModal();endGame(game.players[s.owner].name+" voittaa! "+p.name+" ei pystynyt maksamaan 250 €.");return}
-  p.money-=fee;game.players[s.owner].money+=fee;
-  setLast(p.name+" maksoi 250 € kaupungin omistajalle.");
-  finishLanding();
- }else{setLast("Olet omassa kaupungissasi "+s.name+".");finishLanding()}
-}
-function changeMoney(amount,msg){
- const p=activePlayer();p.money+=amount;setLast(msg);
- if(p.money<0){endGame(game.players[1-game.current].name+" voittaa! Rahat loppuivat.");return}
- if(p.money>=10000){endGame(p.name+" voittaa saavuttamalla 10 000 €!");return}
-}
-function finishLanding(){
- if(!game||game.over)return;
- if(activePlayer().money>=10000){endGame(activePlayer().name+" voittaa!");return}
- renderBoard();updateStats();
- if(activePlayer().rolls>=5){setTimeout(nextTurn,650)}
-}
-function drawCard(type){
- const cards=[
-  ["Löysit lompakon!",300],["Sait matkustajapalkinnon!",200],["Maksoit yllätysmaksun!",-200],
-  ["Sait ystävältä lahjan!",250],["Sää suosi sinua!",150],["Matkasi viivästyi!",-100],
-  ["Voitit kilpailun!",400],["Kadotit matkatavarasi!",-150]
- ];
- const c=cards[Math.floor(Math.random()*cards.length)];
- changeMoney(c[1],type+": "+c[0]+" "+(c[1]>=0?"+":"")+fmt(c[1])+".");
-}
-function drawEvent(){
- const events=[
-  ["Auringonpaiste",250],["Rankkasade",-100],["Matkailupalkinto",300],
-  ["Yllättävä maksu",-200],["Onnekas päivä",200],["Sähkökatko",-50]
- ];
- const e=events[Math.floor(Math.random()*events.length)];
- changeMoney(e[1],"Säätapahtuma: "+e[0]+".");
-}
-function challengeReward(){
- const r=+$("difficulty").value==="hard"?350:200;
- return r;
-}
-function spinWheel(){
- game.busy=true;
- modal("🎡 Epäonnen pyörä","Pyörä pyörii viisi sekuntia!",[],true);
- $("dice").textContent="🎡";$("dice").classList.add("spin");
- diceTimer=setTimeout(()=>{
-  const outcomes=[
-   ["Onnenpotku! Saat 500 €.",()=>changeMoney(500,"Onnenpotku! Saat 500 €.")],
-   ["Maksat 250 €.",()=>changeMoney(-250,"Epäonni: menetit 250 €.")],
-   ["Erikoistehtävä! Saat 150 €.",()=>changeMoney(150,"Suoritit erikoistehtävän! +150 €.")],
-   ["Menetät seuraavan vuoron.",()=>{activePlayer().jailed=1;setLast("Pyörä määräsi ohittamaan seuraavan vuoron.")}],
-   ["Salainen yllätys! Saat tähtikolikoita.",()=>{profile.coins+=50;persist();setLast("Sait 50 tähtikolikkoa!")}]
-  ];
-  const o=outcomes[Math.floor(Math.random()*outcomes.length)];
-  closeModal();game.busy=false;o[1]();setLast(o[0]);finishLanding();
- },5000);
-}
-function nextTurn(){
- if(!game||game.over)return;
- const prev=activePlayer();prev.turns++;
- game.current=1-game.current;
- const p=activePlayer();p.rolls=0;game.busy=false;
- if(p.jailed>0){
-  p.jailed--;game.busy=true;
-  setLast(p.name+" on vankilassa. Jäljellä "+p.jailed+" vuoroa.");
-  renderBoard();updateStats();
-  setTimeout(()=>{if(game&&!game.over){game.busy=false;nextTurn()}},650);
-  return;
- }
- setLast(p.name+" vuoro alkaa.");renderBoard();updateStats();
- if(p.name==="Tekoäly"&&game.mode==="ai"){
-  game.busy=true;updateStats();
-  setTimeout(()=>{if(game&&!game.over&&activePlayer()===p){game.busy=false;rollDice()}},900);
- }
-}
-function endTurn(){
- if(!game||game.over||game.busy)return;
- nextTurn();
-}
-function endGame(msg){
- if(!game)return;
- game.over=true;game.busy=true;setLast(msg);renderBoard();updateStats();
- modal("🏆 Peli päättyi!",msg,[
-  ["Uusi peli",()=>{closeModal();showScreen("setup")}],
-  ["Tallenna ja valikkoon",()=>{saveGame();closeModal();showScreen("home")}],
-  ["Valikkoon",()=>{closeModal();showScreen("home")}]
- ]);
-}
-function saveGame(){
- if(game){profile.savedGame=JSON.parse(JSON.stringify(game));persist();notify("Peli tallennettu tälle laitteelle!")}
-}
-function resumeGame(){
- if(!profile.savedGame){notify("Tallennettua lautapeliä ei löytynyt.");return}
- game=JSON.parse(JSON.stringify(profile.savedGame));game.busy=false;
- showScreen("boardScreen");notify("Tallennettu peli avattu.");
- if(activePlayer()?.name==="Tekoäly"&&game.mode==="ai"&&!game.over){game.busy=true;setTimeout(()=>{if(game&&!game.over){game.busy=false;rollDice()}},700)}
+function continueGame(){
+ if(gameActive&&players.length){createBoard();renderPlayers();updateGame();showScreen("game")}
+ else showScreen("setup");
 }
 function renderCharacters(){
- const grid=$("characterGrid");grid.replaceChildren();
- CHARACTERS.filter(c=>profile.ownedHeroes.includes(c.id)).forEach(c=>{
-  const card=document.createElement("div");card.className="character"+(profile.selectedHero===c.id?" selected":"");
-  const em=document.createElement("div");em.className="emoji";em.textContent=c.emoji;
-  const title=document.createElement("h3");title.textContent=c.name;
-  const tag=document.createElement("small");tag.textContent=c.rarity+(c.season?" · "+c.season:"");
-  const btn=document.createElement("button");btn.textContent=profile.selectedHero===c.id?"✓ Valittu":"Valitse";
-  btn.disabled=profile.selectedHero===c.id;
-  btn.onclick=()=>{profile.selectedHero=c.id;persist();renderCharacters();notify("Valitsit hahmon: "+c.name)};
-  card.append(em,title,tag,btn);grid.append(card);
- });
-}
-function currentSeason(){
- const now=new Date();
- return SEASONS.find(s=>now>=new Date(s.start+"T00:00:00")&&now<new Date(s.end+"T23:59:59"))||null;
-}
-function isSeasonOpen(name){
- const s=currentSeason();return !CHARACTERS.some(c=>c.season===name)||!!s&&s.name===name;
+ $("characterGrid").innerHTML=characters.map((c,i)=>`<div class="character-card"><div class="avatar">${c[0]}</div><h3>${c[1]}</h3><p>${owned.includes(i)?"✅ Omistuksessa":"🔒 Ei vielä avattu"}</p></div>`).join("");
 }
 function renderShop(){
- const grid=$("shopGrid");grid.replaceChildren();
- CHARACTERS.filter(c=>!profile.ownedHeroes.includes(c.id)&&c.price>0).forEach(c=>{
-  const card=document.createElement("div");card.className="character";
-  const em=document.createElement("div");em.className="emoji";em.textContent=c.emoji;
-  const title=document.createElement("h3");title.textContent=c.name;
-  const info=document.createElement("small");info.textContent=c.rarity+(c.season?" · "+c.season:"");
-  const price=document.createElement("p");price.textContent="⭐ "+c.price;
-  const btn=document.createElement("button");btn.textContent="Osta";
-  const open=!c.season||isSeasonOpen(c.season);
-  btn.disabled=profile.coins<c.price||!open;
-  if(!open)btn.textContent="🔒 Kauden ulkopuolella";
-  btn.onclick=()=>{
-   if(profile.coins<c.price)return notify("Tähtikolikoita ei ole tarpeeksi.");
-   profile.coins-=c.price;profile.ownedHeroes.push(c.id);persist();renderShop();notify("Ostit hahmon: "+c.name);
-  };
-  card.append(em,title,info,price,btn);grid.append(card);
- });
+ $("shopCoins").textContent=coins;
+ $("shopGrid").innerHTML=characters.map((c,i)=>`<div class="character-card"><div class="avatar">${c[0]}</div><h3>${c[1]}</h3><p>${owned.includes(i)?"Omistuksessa":c[2]+" kolikkoa"}</p><button ${owned.includes(i)?"disabled":""} onclick="buyCharacter(${i})">${owned.includes(i)?"Omistettu":"Osta"}</button></div>`).join("");
 }
-function renderCities(){
- $("cityCount").textContent=profile.collectedCities.length;$("cityTotal").textContent=CITIES.length;
- $("cityProgress").style.width=(profile.collectedCities.length/CITIES.length*100)+"%";
- const grid=$("cityGrid");grid.replaceChildren();
- CITIES.forEach(c=>{
-  const d=document.createElement("div");d.className="collection-item";
-  const owned=profile.collectedCities.includes(c[0]);
-  d.innerHTML="<div style='font-size:28px'>"+(owned?c[2]:"🔒")+"</div>";
-  const name=document.createElement("strong");name.textContent=owned?c[0]:"Tuntematon kaupunki";
-  const price=document.createElement("p");price.textContent=owned?"✓ Kerätty":"Pelaa lautapeliä löytääksesi";
-  d.append(name,price);grid.append(d);
- });
+function buyCharacter(i){
+ const price=characters[i][2];if(owned.includes(i))return;
+ if(coins<price){alert("Sinulla ei ole tarpeeksi kolikoita.");return}
+ coins-=price;owned.push(i);renderShop();$("coinCount").textContent=coins;saveGame();
 }
-function renderSeasons(){
- const list=$("seasonList");list.replaceChildren();
- const now=new Date();
- SEASONS.forEach(s=>{
-  const start=new Date(s.start+"T00:00:00"),end=new Date(s.end+"T23:59:59");
-  const active=now>=start&&now<=end;
-  const d=document.createElement("div");d.className="stat";
-  const h=document.createElement("h3");h.textContent=s.emoji+" "+s.name+(active?" · KÄYNNISSÄ":"");
-  const p=document.createElement("p");p.textContent="Alkaa "+start.toLocaleDateString("fi-FI")+" · Päättyy "+end.toLocaleDateString("fi-FI");
-  const timer=document.createElement("div");timer.className="timer";
-  if(active){const diff=end-now;timer.textContent="Jäljellä "+Math.max(0,Math.floor(diff/86400000))+" päivää";}
-  else if(now<start){const diff=start-now;timer.textContent="Alkaa "+Math.max(0,Math.floor(diff/86400000))+" päivän kuluttua";}
-  else timer.textContent="Kausi päättynyt";
-  d.append(h,p,timer);list.append(d);
- });
+function renderCalendar(){
+ const now=new Date(),days=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+ $("calendarGrid").innerHTML=Array.from({length:days},(_,i)=>`<div class="calendar-day ${i+1===now.getDate()?"today":""}">${i+1}<br>${i%5===0?"🎁":"⭐"}</div>`).join("");
+ const season=[3,6,9,12].find(m=>m>now.getMonth()+1)||3;
+ $("seasonCountdown").textContent="Katso seuraavan kauden yllätykset!";
+ $("monthlyCharacter").innerHTML=`<div class="character-card"><h3>Kuukauden hahmo</h3><div class="avatar">${characters[now.getMonth()%characters.length][0]}</div><p>${characters[now.getMonth()%characters.length][1]}</p></div>`;
 }
-function updateSeasonHome(){
- const s=currentSeason();
- if(!s){$("seasonHome").textContent="✨ Uusi kausi tulossa";return}
- const end=new Date(s.end+"T23:59:59"),diff=Math.max(0,end-new Date());
- const days=Math.floor(diff/86400000),hours=Math.floor(diff%86400000/3600000),mins=Math.floor(diff%3600000/60000),secs=Math.floor(diff%60000/1000);
- $("seasonHome").textContent=s.name+" "+s.emoji+" · "+days+" pv "+hours+" h "+mins+" min "+secs+" s";
+function renderAchievements(){
+ $("achievementList").innerHTML=`<div class="character-card"><h3>🌍 Maailmanmatkaaja</h3><p>Pelaa ensimmäinen peli.</p><b>${score>0?"✅ Avattu":"🔒 Lukittu"}</b></div><div class="character-card"><h3>🪙 Kolikkokeräilijä</h3><p>Kerää kolikoita.</p><b>${coins>=150?"✅ Avattu":"🔒 Lukittu"}</b></div>`;
 }
-const ROOMS=[
- {name:"I Suljettu portti",desc:"Kartanon portti on lukossa. Tutki kivistä portinpylvästä ja etsi avain.",item:"Portin avain",puzzle:"Mikä avaa lukon? Kirjoita sana AVAIN.",answer:"avain",hint:"Avain sopii lukkoon."},
- {name:"II Unohtunut kirjasto",desc:"Kirjojen välissä on salakirjoitettu viesti: A=1, B=2, C=3. Mikä kirjain on numero 3?",item:"Salakirjan sivu",puzzle:"Mikä kirjain vastaa numeroa 3?",answer:"c",hint:"Laske A, B, C."},
- {name:"III Noidan työhuone",desc:"Pöydällä on kolme ainesosaa. Yhdistä rohkeus, valo ja ystävällisyys.",item:"Taikajuoman pullo",puzzle:"Mikä loistaa pimeässä? Kirjoita VALO.",answer:"valo",hint:"Lyhty tuottaa sitä."},
- {name:"IV Varjojen kellotorni",desc:"Kello näyttää pysähtyneen. Osoittimet muodostavat järjestyksen 2, 4, 6, ?",item:"Kellon hammasratas",puzzle:"Mikä numero jatkaa sarjaa 2, 4, 6, ...?",answer:"8",hint:"Lisää joka kerta kaksi."},
- {name:"V Peilisali",desc:"Peilit näyttävät eri symboleita. Kolme tähteä muodostavat salaisen polun.",item:"Muistipeilin siru",puzzle:"Mikä on 3 + 4?",answer:"7",hint:"Laske yhteen."},
- {name:"VI Salainen käytävä",desc:"Käytävän seinässä on vanha arvoitus: minulla on hampaat, mutta en pure. Mikä olen?",item:"Hopeinen hammasavain",puzzle:"Mikä esine sopii arvoitukseen? KAMPA.",answer:"kampa",hint:"Sillä selvitetään hiuksia."},
- {name:"VII Seitsemännen avaimen sali",desc:"Viimeisessä salissa Herra Huurre odottaa. Selvitä salaisuus ennen aamunkoittoa.",item:"Seitsemäs taikaesine",puzzle:"Kirjoita AAMUNKOITTO avataksesi viimeisen salin.",answer:"aamunkoitto",hint:"Se tapahtuu ennen aamuaurinkoa."}
+loadGame();$("coinCount").textContent=coins;
+if(settings.mode==="two")$("difficultyGroup").style.display="none";
+renderCharacterPicker();
+</script><script>
+const memoryPairs=[
+["🇫🇮","Suomi"],["🇯🇵","Japani"],["🇧🇷","Brasilia"],["🇨🇦","Kanada"],
+["🇪🇬","Egypti"],["🇮🇹","Italia"],["🇳🇴","Norja"],["🇦🇺","Australia"]
 ];
-function startAdventure(){
- adventure={room:0,found:[],visited:[0],inventory:[],candy:0,lantern:3,clues:[],done:[],difficulty:$("adventureDifficulty").value};
- showScreen("adventurePlay");renderAdventure();
+let memoryCards=[],memoryOpen=[],memoryMatches=0,memoryLock=false;
+function startMemoryGame(){
+ memoryCards=memoryPairs.flatMap((p,i)=>[
+  {value:p[0],pair:i,type:"flag"},
+  {value:p[1],pair:i,type:"name"}
+ ]).sort(()=>Math.random()-.5);
+ memoryOpen=[];memoryMatches=0;memoryLock=false;
+ $("minigameArea").innerHTML=`<h2>🌍 Maailman muistipeli</h2><p>Yhdistä jokainen lippu oikeaan maahan.</p><p>Parit: <b id="memoryScore">0 / 8</b></p><div class="memory-grid" id="memoryGrid"></div>`;
+ renderMemory();
 }
-function renderAdventure(){
- if(!adventure)return;
- const r=ROOMS[adventure.room];
- $("roomTitle").textContent=r.name;$("roomDescription").textContent=r.desc;
- $("artifactCount").textContent=adventure.found.length+"/7";
- $("candyCount").textContent=adventure.candy;$("lanternCount").textContent=adventure.lantern;
- $("artifactProgress").style.width=(adventure.found.length/7*100)+"%";
- $("inventory").textContent=adventure.inventory.length?adventure.inventory.join(" · "):"Taskusi ovat tyhjät.";
- const map=$("roomMap");map.replaceChildren();
- ROOMS.forEach((room,i)=>{
-  const btn=document.createElement("button");btn.className="room "+(!adventure.visited.includes(i)&&i>Math.max(...adventure.visited)+1?"locked":"");
-  btn.textContent=(adventure.visited.includes(i)?"✓ ":"🔒 ")+(i+1);
-  btn.title=room.name;
-  btn.disabled=!adventure.visited.includes(i)&&i>Math.max(...adventure.visited)+1;
-  btn.onclick=()=>{if(!adventure.visited.includes(i)&&i>Math.max(...adventure.visited)+1)return;adventure.room=i;renderAdventure()};
-  map.append(btn);
- });
+function renderMemory(){
+ $("memoryGrid").innerHTML=memoryCards.map((c,i)=>{
+  const visible=memoryOpen.includes(i)||c.matched;
+  return `<button class="memory-card ${visible?"open":""} ${c.matched?"matched":""}" onclick="flipMemory(${i})">${visible?c.value:"❔"}</button>`;
+ }).join("");
+ $("memoryScore").textContent=memoryMatches+" / 8";
 }
-function exploreRoom(){
- if(!adventure)return;
- const r=ROOMS[adventure.room];
- if(!adventure.found.includes(r.item)){
-  adventure.found.push(r.item);adventure.inventory.push(r.item);adventure.candy+=2;
-  adventure.lantern=Math.min(5,adventure.lantern+1);
-  if(adventure.room<ROOMS.length-1&&!adventure.visited.includes(adventure.room+1))adventure.visited.push(adventure.room+1);
-  notify("Löysit esineen: "+r.item+"!");
- }else{adventure.candy++;notify("Löysit karkin!")}
- renderAdventure();
- if(adventure.found.length===7){
-  profile.coins+=100;persist();
-  modal("🌅 Kartanon salaisuus selvisi!","Löysit kaikki seitsemän taikaesinettä ja selvitit pysähtyneen ajan mysteerin. Saat 100 tähtikolikkoa!",[ 
-   ["Pelaa uudelleen",()=>{closeModal();startAdventure()}],
-   ["Valikkoon",()=>{closeModal();showScreen("home")}]
-  ]);
- }
-}
-function solvePuzzle(){
- if(!adventure)return;
- const r=ROOMS[adventure.room];
- if(adventure.done.includes(adventure.room)){notify("Olet ratkaissut tämän huoneen arvoituksen.");return}
- const answer=prompt(r.puzzle);
- if(answer===null)return;
- if(answer.trim().toLowerCase()===r.answer){
-  adventure.done.push(adventure.room);adventure.candy+=3;adventure.clues.push("Ratkaisit: "+r.name);
-  if(adventure.room<ROOMS.length-1&&!adventure.visited.includes(adventure.room+1))adventure.visited.push(adventure.room+1);
-  notify("Oikein! Sait kolme karkkia.");
-  renderAdventure();
- }else{
-  adventure.candy=Math.max(0,adventure.candy-1);
-  notify("Ei aivan oikein. Menetit yhden karkin. Kokeile uudelleen!");
-  renderAdventure();
- }
-}
-function useLantern(){
- if(!adventure)return;
- if(adventure.lantern<=0){notify("Lyhty on tyhjä. Tutki huonetta löytääksesi latauksen.");return}
- adventure.lantern--;
- const r=ROOMS[adventure.room];
- modal("🏮 Lyhdyn valo",r.hint,[["Jatka",()=>{closeModal();renderAdventure()}]]);
-}
-function roomHint(){if(!adventure)return;modal("💡 Vihje",ROOMS[adventure.room].hint,[["Kiitos!",closeModal]])}
-function leaveAdventure(){
- modal("Poistu seikkailusta?","Edistymistä ei tallenneta, kun poistut tästä seikkailusta.",[
-  ["Poistu",()=>{adventure=null;closeModal();showScreen("home")}],
-  ["Jatka",closeModal]
- ]);
-}
-function startStar(){star={x:3,y:3,score:0,target:randomStar()};renderStar()}
-function randomStar(){return{x:Math.floor(Math.random()*7),y:Math.floor(Math.random()*7)}}
-function moveStar(dx,dy){
- if(!star)startStar();
- star.x=Math.max(0,Math.min(6,star.x+dx));star.y=Math.max(0,Math.min(6,star.y+dy));
- if(star.x===star.target.x&&star.y===star.target.y){
-  star.score+=1;profile.coins+=5;
-  if(star.score>profile.bestStar)profile.bestStar=star.score;
-  star.target=randomStar();persist();notify("+1 tähti ja 5 tähtikolikkoa!");
- }
- renderStar();
-}
-function renderStar(){
- if(!star)startStar();
- $("starScore").textContent=star.score;$("starBest").textContent=profile.bestStar;
- const field=$("starField");field.replaceChildren();
- for(let y=0;y<7;y++)for(let x=0;x<7;x++){
-  const d=document.createElement("div");d.style.aspectRatio="1";d.style.borderRadius="5px";d.style.background="#302449";d.style.display="grid";d.style.placeItems="center";
-  d.textContent=x===star.x&&y===star.y?"🧑‍🚀":x===star.target.x&&y===star.target.y?"⭐":"";
-  field.append(d);
- }
-}
-function orientation(){
- document.body.classList.toggle("landscape");
- try{if(document.body.classList.contains("landscape")&&screen.orientation?.lock)screen.orientation.lock("landscape").catch(()=>{});else screen.orientation?.unlock?.()}catch(e){}
- notify(document.body.classList.contains("landscape")?"Vaakatilan asettelu päällä.":"Pystytilan asettelu päällä.");
-}
-function saveSettings(){
- profile.settings={sound:$("soundSetting").value,motion:$("motionSetting").value,text:$("textSetting").value};
- document.body.style.fontSize=profile.settings.text==="large"?"18px":"16px";
- document.body.style.scrollBehavior=profile.settings.motion==="off"?"auto":"smooth";
- persist();notify("Asetukset tallennettu.");
-}
-function resetConfirm(){
- modal("Nollataanko pelitiedot?","Tämä poistaa tällä laitteella olevat pelitallennukset, hahmot ja kerätyt kaupungit.",[
-  ["Peruuta",closeModal],
-  ["Nollaa kaikki",()=>{profile=initial();game=null;adventure=null;persist();closeModal();showScreen("home");notify("Paikalliset pelitiedot nollattu.")}]
- ]);
-}
-function handleAction(action){
- switch(action){
-  case "home":showScreen("home");break;
-  case "homeConfirm":homeConfirm();break;
-  case "setup":showScreen("setup");break;
-  case "startBoard":startBoard();break;
-  case "roll":rollDice();break;
-  case "endTurn":endTurn();break;
-  case "save":saveGame();break;
-  case "resume":resumeGame();break;
-  case "characters":showScreen("characters");break;
-  case "shop":showScreen("shop");break;
-  case "cities":showScreen("cities");break;
-  case "seasons":showScreen("seasons");break;
-  case "settings":
-   $("soundSetting").value=profile.settings.sound;
-   $("motionSetting").value=profile.settings.motion;
-   $("textSetting").value=profile.settings.text;showScreen("settings");break;
-  case "saveSettings":saveSettings();break;
-  case "orientation":orientation();break;
-  case "adventure":showScreen("adventure");break;
-  case "startAdventure":startAdventure();break;
-  case "exploreRoom":exploreRoom();break;
-  case "useLantern":useLantern();break;
-  case "solvePuzzle":solvePuzzle();break;
-  case "roomHint":roomHint();break;
-  case "leaveAdventure":leaveAdventure();break;
-  case "starGame":star=null;startStar();showScreen("starGame");break;
-  case "startStar":startStar();break;
-  case "starUp":moveStar(0,-1);break;
-  case "starDown":moveStar(0,1);break;
-  case "starLeft":moveStar(-1,0);break;
-  case "starRight":moveStar(1,0);break;
-  case "resetConfirm":resetConfirm();break;
- }
-}
-document.addEventListener("click",e=>{
- const btn=e.target.closest("[data-action]");
- if(!btn)return;
- try{handleAction(btn.dataset.action)}catch(err){console.error(err);notify("Toiminnossa tapahtui virhe. Yritä uudelleen.")}
-});
-document.addEventListener("keydown",e=>{
- if(!$("starGame").classList.contains("active"))return;
- if(e.key==="ArrowUp")moveStar(0,-1);
- if(e.key==="ArrowDown")moveStar(0,1);
- if(e.key==="ArrowLeft")moveStar(-1,0);
- if(e.key==="ArrowRight")moveStar(1,0);
-});
-window.addEventListener("beforeunload",()=>{if(game&&!game.over)saveGame()});
-updateHome();updateSeasonHome();setInterval(updateSeasonHome,1000);
-renderCities();
-function drawCard(type) {
-  if (!game || game.over) return;
-
-  const isHupi = type.toLowerCase().includes("hupi");
-
-  const cards = isHupi
-    ? [
-        { text: "🎉 Hupi! Voitit kilpailun!", money: 300 },
-        { text: "🍰 Hupi! Sait yllätyslahjan!", money: 200 },
-        { text: "🎈 Hupi! Ystäväsi antoi sinulle rahaa!", money: 150 },
-        { text: "🎭 Hupi! Hauska tapahtuma toi palkinnon!", money: 400 },
-        { text: "🧁 Hupi! Ostit herkkuja juhliin.", money: -100 },
-        { text: "🎊 Hupi! Voitit pienen arvonnan!", money: 250 }
-      ]
-    : [
-        { text: "🌍 Maailmalla! Sait matkailupalkinnon!", money: 300 },
-        { text: "✈️ Maailmalla! Löysit halvan lentolipun ja säästit!", money: 200 },
-        { text: "🏨 Maailmalla! Hotellilasku yllätti.", money: -200 },
-        { text: "🧳 Maailmalla! Löysit kadonneen matkalaukun palkkion!", money: 250 },
-        { text: "🚆 Maailmalla! Junamatka tuli kalliiksi.", money: -100 },
-        { text: "🗺️ Maailmalla! Löysit uuden matkakohteen ja sait palkinnon!", money: 400 }
-      ];
-
-  const card = cards[Math.floor(Math.random() * cards.length)];
-
-  modal(
-    isHupi ? "🎉 Hupi-kortti!" : "🌍 Maailmalla-kortti!",
-    card.text + "\n\n" +
-      (card.money >= 0
-        ? "Saat " + fmt(card.money) + "."
-        : "Maksat " + fmt(Math.abs(card.money)) + "."),
-    [
-      ["Nosta kortti ja jatka", () => {
-        closeModal();
-
-        if (!game || game.over) return;
-
-        const player = activePlayer();
-        player.money += card.money;
-
-        setLast(card.text);
-        renderBoard();
-        updateStats();
-
-        if (player.money < 0) {
-          endGame(game.players[1 - game.current].name +
-            " voittaa! " + player.name + " ei pystynyt maksamaan velkaansa.");
-          return;
-        }
-
-        if (player.money >= 10000) {
-          endGame(player.name + " voittaa saavuttamalla 10 000 €!");
-          return;
-        }
-
-        finishLanding();
-      }]
-    ]
-  );
+function flipMemory(i){
+ if(memoryLock||memoryOpen.includes(i)||memoryCards[i].matched)return;
+ memoryOpen.push(i);renderMemory();
+ if(memoryOpen.length===2){
+  const [a,b]=memoryOpen;
+  if(memoryCards[a].pair===memoryCards[b].pair&&memoryCards[a].type!==memoryCards[b].type){
+   memoryCards[a].matched=true;memoryCards[b].matched=true;memoryMatches++;
+   memoryOpen=[];renderMemory();
+   if(memoryMatches===8){
+    coins+=50;$("coinCount").textContent=coins;saveGame();
+    $("minigameArea").innerHTML+='<h2>🎉 Hienoa! Kaikki parit löytyivät!</h2><p>Sait 50 kolikkoa!</p>';
+   }
+  }else{
+   memoryLock=true;
+   setTimeout(()=>{memoryOpen=[];memoryLock=false;renderMemory()},900);
   }
+ }
+}
+const flagQuestions=[
+["🇫🇮","Mikä maa käyttää tätä lippua?",["Suomi","Ruotsi","Norja"],0],
+["🇯🇵","Mikä maa käyttää tätä lippua?",["Kiina","Japani","Etelä-Korea"],1],
+["🇧🇷","Mikä maa käyttää tätä lippua?",["Brasilia","Portugali","Meksiko"],0],
+["🇨🇦","Mikä maa käyttää tätä lippua?",["Yhdysvallat","Kanada","Australia"],1],
+["🇪🇬","Mikä maa käyttää tätä lippua?",["Egypti","Marokko","Kenia"],0],
+["🇮🇹","Mikä maa käyttää tätä lippua?",["Ranska","Italia","Saksa"],1],
+["🇳🇴","Mikä maa käyttää tätä lippua?",["Tanska","Islanti","Norja"],2],
+["🇦🇺","Mikä maa käyttää tätä lippua?",["Uusi-Seelanti","Australia","Intia"],1]
+];
+let quizIndex=0,quizPoints=0,quizList=[];
+function startFlagQuiz(){
+ quizList=[...flagQuestions].sort(()=>Math.random()-.5);quizIndex=0;quizPoints=0;showQuiz();
+}
+function startCountryQuiz(){
+ quizList=[
+ ["🌍","Mikä on Suomen pääkaupunki?",["Helsinki","Tampere","Turku"],0],
+ ["🗼","Missä Eiffel-torni sijaitsee?",["Rooma","Pariisi","Lontoo"],1],
+ ["🐨","Mihin maahan koala liittyy?",["Kanada","Japani","Australia"],2],
+ ["🏯","Mikä on Japanin pääkaupunki?",["Tokio","Osaka","Kioto"],0],
+ ["🗽","Missä New York sijaitsee?",["Kanada","Yhdysvallat","Meksiko"],1],
+ ["🏜️","Missä maassa Gizan pyramidit ovat?",["Egypti","Kreikka","Intia"],0]
+ ].sort(()=>Math.random()-.5);
+ quizIndex=0;quizPoints=0;showQuiz();
+}
+function showQuiz(){
+ if(quizIndex>=quizList.length){
+  coins+=quizPoints*5;$("coinCount").textContent=coins;saveGame();
+  $("minigameArea").innerHTML=`<h2>🏆 Visa valmis!</h2><p>Sait ${quizPoints} / ${quizList.length} oikein.</p><p>Palkinto: ${quizPoints*5} kolikkoa.</p><button onclick="startFlagQuiz()">Pelaa uudelleen</button>`;
+  return;
+ }
+ const q=quizList[quizIndex];
+ $("minigameArea").innerHTML=`<h2>${quizIndex+1} / ${quizList.length}</h2><div style="font-size:65px;text-align:center">${q[0]}</div><h3>${q[1]}</h3><div class="option-grid">${q[2].map((a,i)=>`<button onclick="answerQuiz(${i})">${a}</button>`).join("")}</div><p id="quizFeedback"></p>`;
+}
+function answerQuiz(i){
+ const q=quizList[quizIndex];
+ const correct=i===q[3];
+ if(correct)quizPoints++;
+ $("quizFeedback").textContent=correct?"✅ Oikein!":"❌ Ei aivan!";
+ document.querySelectorAll("#minigameArea button").forEach(b=>b.disabled=true);
+ setTimeout(()=>{quizIndex++;showQuiz()},850);
+}
+let speedTimer=null,speedTime=20,speedPoints=0,speedQuestion=0;
+function startSpeedGame(){
+ clearInterval(speedTimer);speedTime=20;speedPoints=0;speedQuestion=0;
+ showSpeedQuestion();
+ speedTimer=setInterval(()=>{
+  speedTime--;
+  const t=$("speedTime");if(t)t.textContent=speedTime;
+  if(speedTime<=0){
+   clearInterval(speedTimer);coins+=speedPoints*5;$("coinCount").textContent=coins;saveGame();
+   $("minigameArea").innerHTML=`<h2>⚡ Aika loppui!</h2><p>Sait ${speedPoints} pistettä.</p><p>Palkinto: ${speedPoints*5} kolikkoa.</p>`;
+  }
+ },1000);
+}
+function showSpeedQuestion(){
+ const q=flagQuestions[Math.floor(Math.random()*flagQuestions.length)];
+ $("minigameArea").innerHTML=`<h2>⚡ Pikahaaste</h2><p>Aikaa: <b id="speedTime">${speedTime}</b> sekuntia</p><div style="font-size:60px">${q[0]}</div><h3>${q[1]}</h3><div class="option-grid">${q[2].map((a,i)=>`<button onclick="speedAnswer(${i},${q[3]})">${a}</button>`).join("")}</div><p>Pisteet: ${speedPoints}</p>`;
+}
+function speedAnswer(choice,correct){
+ if(choice===correct)speedPoints++;
+ speedQuestion++;showSpeedQuestion();
+}
+function initSnow(){
+ const snow=document.createElement("div");
+ snow.style.cssText="position:fixed;inset:0;pointer-events:none;z-index:4;opacity:.45;background-image:radial-gradient(white 1px,transparent 1px),radial-gradient(white 1px,transparent 1px);background-size:45px 45px,75px 75px;background-position:0 0,20px 30px";
+ document.body.appendChild(snow);
+}
+initSnow();
 </script>
 </body>
 </html>
-  
-
- 
