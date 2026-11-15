@@ -145,7 +145,8 @@
 <section id="calendarScreen" class="screen"><div class="section-heading"><button onclick="showScreen('home')">← Takaisin</button><h2>📅 Maailmankalenteri</h2></div><div class="season-countdown">❄️ Seuraava vuodenaika: <strong id="seasonCountdown"></strong></div><div id="calendarGrid" class="calendar-grid"></div><div id="monthlyCharacter"></div></section>
 <section id="achievementsScreen" class="screen"><div class="section-heading"><button onclick="showScreen('home')">← Takaisin</button><h2>🏆 Saavutukset</h2></div><div id="achievementList"></div></section>
 </main>
-<footer>🌍 MAAILMALLA 2027 · Maailma on täynnä seikkailuja! ❄️</footer><script>
+<footer>🌍 MAAILMALLA 2027 · Maailma on täynnä seikkailuja! ❄️</footer> 
+<script>
 const destinations=[
 ["🇫🇮","Helsinki","Suomi"],["🇸🇪","Tukholma","Ruotsi"],["🇳🇴","Oslo","Norja"],["🇩🇰","Kööpenhamina","Tanska"],["🇮🇸","Reykjavik","Islanti"],
 ["🇬🇧","Lontoo","Iso-Britannia"],["🇫🇷","Pariisi","Ranska"],["🇩🇪","Berliini","Saksa"],["🇮🇹","Rooma","Italia"],["🇪🇸","Madrid","Espanja"],
@@ -158,292 +159,684 @@ const destinations=[
 ["🇦🇷","Buenos Aires","Argentiina"],["🇨🇱","Santiago","Chile"],["🇵🇪","Lima","Peru"],["🇨🇴","Bogotá","Kolumbia"],["🇨🇷","San José","Costa Rica"],
 ["🇫🇯","Suva","Fidži"],["🇵🇭","Manila","Filippiinit"],["🇵🇰","Islamabad","Pakistan"],["🇸🇦","Riad","Saudi-Arabia"],["🇦🇪","Dubai","Arabiemiirikunnat"]
 ];
+
 const characters=[
 ["🧑‍🚀","Astronautti",0],["🧙","Velho",0],["🐨","Koala",0],["🐯","Tiikeri",0],
 ["🤖","Robotti",0],["🦄","Yksisarvinen",0],["🦊","Napakettu",0],["🎅","Joulupukki",0],
 ["🐼","Panda",100],["🐸","Sammakko",120],["🦁","Leijona",130],["🐧","Pingviini",140],
 ["🧛","Vampyyri",150],["🧝","Tonttu",160],["🐲","Lohikäärme",180],["👑","Kuninkaallinen",200]
 ];
-let coins=100,owned=[0,1,2,3,4,5,6,7],selectedCharacter=0;
-let settings={mode:"bot",board:"small",length:10,difficulty:"easy"};
-let players=[],turn=0,round=1,gameActive=false,tiles=[],tileCount=20;
-let score=0,achievements=[];
+
+let coins=100;
+let owned=[0,1,2,3,4,5,6,7];
+let selectedCharacter=0;
+
+let settings={
+ mode:"bot",
+ board:"small",
+ length:10,
+ difficulty:"easy"
+};
+
+let players=[];
+let playerMoney=[];
+let cityOwners={};
+let turn=0;
+let round=1;
+let gameActive=false;
+let tiles=[];
+let tileCount=20;
+let score=0;
+let achievements=[];
+
 const $=id=>document.getElementById(id);
-function saveGame(){localStorage.setItem("maailmallaSave",JSON.stringify({coins,owned,selectedCharacter,settings,players,turn,round,score,gameActive}))}
-function loadGame(){try{let s=JSON.parse(localStorage.getItem("maailmallaSave"));if(!s)return;coins=s.coins??100;owned=s.owned??owned;selectedCharacter=s.selectedCharacter??0;settings=s.settings??settings;players=s.players??[];turn=s.turn??0;round=s.round??1;score=s.score??0;gameActive=s.gameActive??false}catch(e){}}
+
+const worldCards=[
+ {text:"Löysit matkalta rahaa!",money:100},
+ {text:"Sait matkailupalkinnon!",money:150},
+ {text:"Maksa hotellimaksu.",money:-75},
+ {text:"Matkasi tuli kalliiksi.",money:-50},
+ {text:"Voitit matkakilpailun!",money:200},
+ {text:"Saat yllätysrahaa!",money:50},
+ {text:"Ostit matkamuistoja.",money:-25},
+ {text:"Sait sponsorilta rahaa!",money:125},
+ {text:"Lentoyhtiö antoi hyvityksen!",money:75},
+ {text:"Maksa matkalippu.",money:-100},
+ {text:"Sait ilmaisen hotelliyön!",money:100},
+ {text:"Matkalaukkusi löytyi. Saat korvauksen!",money:50},
+ {text:"Retkesi maksoi odotettua enemmän.",money:-125},
+ {text:"Voitit valokuvakilpailun!",money:175},
+ {text:"Sait syntymäpäivälahjan!",money:100},
+ {text:"Maksa museon pääsymaksu.",money:-30}
+];
+
+function saveGame(){
+ try{
+  localStorage.setItem("maailmallaSave",JSON.stringify({
+   coins,owned,selectedCharacter,settings,players,playerMoney,
+   cityOwners,turn,round,score,gameActive
+  }));
+ }catch(e){}
+}
+
+function loadGame(){
+ try{
+  const s=JSON.parse(localStorage.getItem("maailmallaSave"));
+  if(!s)return;
+
+  coins=s.coins??100;
+  owned=s.owned??owned;
+  selectedCharacter=s.selectedCharacter??0;
+  settings=s.settings??settings;
+  players=s.players??[];
+  playerMoney=s.playerMoney??[];
+  cityOwners=s.cityOwners??{};
+  turn=s.turn??0;
+  round=s.round??1;
+  score=s.score??0;
+  gameActive=s.gameActive??false;
+ }catch(e){}
+}
+
 function showScreen(name){
  document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
- const el=$(name+"Screen");if(el)el.classList.add("active");
+
+ const el=$(name+"Screen");
+ if(el)el.classList.add("active");
+
  if(name==="characters")renderCharacters();
  if(name==="shop")renderShop();
  if(name==="calendar")renderCalendar();
  if(name==="achievements")renderAchievements();
  if(name==="setup")renderCharacterPicker();
 }
+
 function selectOption(button,type){
  button.parentElement.querySelectorAll(".option").forEach(x=>x.classList.remove("selected"));
  button.classList.add("selected");
+
  if(type==="mode")settings.mode=button.dataset.mode;
  if(type==="board")settings.board=button.dataset.board;
  if(type==="length")settings.length=Number(button.dataset.length);
  if(type==="difficulty")settings.difficulty=button.dataset.difficulty;
- if(type==="mode")$("difficultyGroup").style.display=settings.mode==="bot"?"block":"none";
-}
-function renderCharacterPicker(){
- $("setupCharacterList").innerHTML=characters.map((c,i)=>`<button class="character-choice ${i===selectedCharacter?"selected":""}" onclick="chooseCharacter(${i})" title="${c[1]}">${c[0]}</button>`).join("");
-}
-function chooseCharacter(i){if(!owned.includes(i)){alert("Tämä hahmo pitää ensin ostaa kaupasta.");return}selectedCharacter=i;renderCharacterPicker()}
-function startGame(){
- const count={small:20,normal:28,large:36,huge:48}[settings.board];
- tileCount=count;
- players=[{name:"Pelaaja 1",char:characters[selectedCharacter][0],pos:0,score:0}];
- if(settings.mode==="two")players.push({name:"Pelaaja 2",char:"🐧",pos:0,score:0});
- else players.push({name:"Botti",char:"🤖",pos:0,score:0});
- turn=0;round=1;score=0;gameActive=true;
- createBoard();renderPlayers();updateGame();showScreen("game");saveGame();
-}
-function createBoard(){
- const board=$("gameBoard");board.innerHTML="";
- const n=7,coords=[];
- for(let c=0;c<n;c++)coords.push([0,c]);
- for(let r=1;r<n;r++)coords.push([r,n-1]);
- for(let c=n-2;c>=0;c--)coords.push([n-1,c]);
- for(let r=n-2;r>0;r--)coords.push([r,0]);
- const chosen=destinations.slice(0,tileCount);
- tiles=Array.from({length:coords.length},(_,i)=>chosen[i%chosen.length]);
- coords.forEach(([r,c],i)=>{
-  const d=document.createElement("div");d.className="board-tile";d.id="tile"+i;
-  d.style.gridRow=r+1;d.style.gridColumn=c+1;
-  d.innerHTML=`<span class="tile-icon">${tiles[i][0]}</span><b>${tiles[i][1]}</b><span>${tiles[i][2]}</span>`;
-  board.appendChild(d);
- });
- const center=document.createElement("div");center.id="boardCenter";center.className="board-center";
- center.innerHTML='<div class="center-logo">🌍</div><h2>MAAILMALLA</h2><p>Maailma odottaa!</p><div id="diceResult">🎲</div><button class="primary-button" id="rollButton" onclick="rollDice()">Heitä noppaa</button>';
- board.appendChild(center);
-}
-function renderPlayers(){
- $("playerList").innerHTML=players.map((p,i)=>`<p>${p.char} <b>${p.name}</b><br>📍 Ruutu ${p.pos+1} · ⭐ ${p.score}</p>`).join("");
-}
-function updateGame(){
- $("turnNumber").textContent=round;$("roundDisplay").textContent=round;
- $("scoreDisplay").textContent=players[0]?.score??0;
- $("coinCount").textContent=coins;
- document.querySelectorAll(".board-tile").forEach(x=>x.classList.remove("current"));
- players.forEach(p=>{const t=$("tile"+p.pos);if(t)t.classList.add("current")});
- $("destinationInfo").innerHTML=`<h4>📍 Kohde</h4><p>${tiles[players[turn].pos]?.[0]??""} ${tiles[players[turn].pos]?.[1]??""}</p>`;
- renderPlayers();saveGame();
-}
-function rollDice(){
- if(!gameActive)return;
- const p=players[turn],dice=Math.floor(Math.random()*6)+1;
- $("diceResult").textContent="🎲 "+dice;
- p.pos=(p.pos+dice)%tileCount;
- p.score+=10;coins+=5;score+=10;
- const dest=tiles[p.pos];
- $("destinationInfo").innerHTML=`<h4>📍 ${dest[0]} ${dest[1]}</h4><p>${dest[2]}</p><p>+10 pistettä ja +5 kolikkoa!</p>`;
- renderPlayers();updateGame();
- if(p.pos===0){round++;if(round>settings.length){endGame();return}}
- turn=(turn+1)%players.length;
- if(settings.mode==="bot"&&turn===1){$("rollButton").disabled=true;setTimeout(botTurn,800)}else $("rollButton").disabled=false;
- updateGame();
-}
-function botTurn(){
- if(!gameActive)return;
- const p=players[1],dice=Math.floor(Math.random()*6)+1;
- p.pos=(p.pos+dice)%tileCount;p.score+=10;
- $("diceResult").textContent="🤖 Botti heitti "+dice;
- turn=0;if(p.pos===0)round++;
- if(round>settings.length){endGame();return}
- $("rollButton").disabled=false;updateGame();
-}
-function endGame(){
- gameActive=false;
- const winner=[...players].sort((a,b)=>b.score-a.score)[0];
- $("boardCenter").innerHTML=`<div class="center-logo">🏆</div><h2>Peli päättyi!</h2><h3>${winner.name} voitti!</h3><p>Pisteet: ${winner.score}</p><button class="primary-button" onclick="showScreen('home')">Valikkoon</button>`;
+
+ if(type==="mode"&&$("difficultyGroup")){
+  $("difficultyGroup").style.display=settings.mode==="bot"?"block":"none";
+ }
+
  saveGame();
 }
-function continueGame(){
- if(gameActive&&players.length){createBoard();renderPlayers();updateGame();showScreen("game")}
- else showScreen("setup");
+
+function renderCharacterPicker(){
+ if(!$("setupCharacterList"))return;
+
+ $("setupCharacterList").innerHTML=characters.map((c,i)=>`
+  <button class="character-choice ${i===selectedCharacter?"selected":""}"
+   onclick="chooseCharacter(${i})" title="${c[1]}">
+   ${c[0]}
+  </button>
+ `).join("");
 }
-function renderCharacters(){
- $("characterGrid").innerHTML=characters.map((c,i)=>`<div class="character-card"><div class="avatar">${c[0]}</div><h3>${c[1]}</h3><p>${owned.includes(i)?"✅ Omistuksessa":"🔒 Ei vielä avattu"}</p></div>`).join("");
+
+function chooseCharacter(i){
+ if(!owned.includes(i)){
+  alert("Tämä hahmo pitää ensin ostaa kaupasta.");
+  return;
+ }
+
+ selectedCharacter=i;
+ renderCharacterPicker();
+ saveGame();
 }
-function renderShop(){
- $("shopCoins").textContent=coins;
- $("shopGrid").innerHTML=characters.map((c,i)=>`<div class="character-card"><div class="avatar">${c[0]}</div><h3>${c[1]}</h3><p>${owned.includes(i)?"Omistuksessa":c[2]+" kolikkoa"}</p><button ${owned.includes(i)?"disabled":""} onclick="buyCharacter(${i})">${owned.includes(i)?"Omistettu":"Osta"}</button></div>`).join("");
+
+/* PELIN ALOITUS */
+
+function startGame(){
+ tileCount={
+  small:20,
+  normal:28,
+  large:36,
+  huge:48
+ }[settings.board]||20;
+
+ players=[{
+  name:"Pelaaja 1",
+  char:characters[selectedCharacter][0],
+  pos:0,
+  score:0
+ }];
+
+ if(settings.mode==="two"){
+  players.push({
+   name:"Pelaaja 2",
+   char:"🐧",
+   pos:0,
+   score:0
+  });
+ }else{
+  players.push({
+   name:"Botti",
+   char:"🤖",
+   pos:0,
+   score:0
+  });
+ }
+
+ playerMoney=players.map(()=>500);
+ cityOwners={};
+ turn=0;
+ round=1;
+ score=0;
+ gameActive=true;
+
+ createBoard();
+ showScreen("game");
+ updateGame();
+ saveGame();
 }
-function buyCharacter(i){
- const price=characters[i][2];if(owned.includes(i))return;
- if(coins<price){alert("Sinulla ei ole tarpeeksi kolikoita.");return}
- coins-=price;owned.push(i);renderShop();$("coinCount").textContent=coins;saveGame();
+
+/* PELILAUTA */
+
+function createBoard(){
+ const board=$("gameBoard");
+ if(!board)return;
+
+ board.innerHTML="";
+
+ const side=tileCount/4+1;
+ const coords=[];
+
+ for(let c=0;c<side;c++)coords.push([0,c]);
+ for(let r=1;r<side;r++)coords.push([r,side-1]);
+ for(let c=side-2;c>=0;c--)coords.push([side-1,c]);
+ for(let r=side-2;r>0;r--)coords.push([r,0]);
+
+ tiles=destinations.slice(0,tileCount);
+
+ board.style.display="grid";
+ board.style.gridTemplateColumns=`repeat(${side},minmax(0,1fr))`;
+ board.style.gridTemplateRows=`repeat(${side},minmax(65px,auto))`;
+ board.style.gap="5px";
+
+ coords.forEach(([r,c],i)=>{
+  const dest=tiles[i];
+  const d=document.createElement("div");
+
+  d.className="board-tile";
+  d.id="tile"+i;
+  d.style.gridRow=r+1;
+  d.style.gridColumn=c+1;
+
+  const price=getCityPrice(i);
+  const owner=cityOwners[i];
+
+  d.innerHTML=`
+   <span class="tile-icon">${dest[0]}</span>
+   <b>${dest[1]}</b>
+   <span>${dest[2]}</span>
+   <span class="city-price">${price} 🪙</span>
+   <span class="player-icons"></span>
+   ${owner!==undefined?`<span class="city-owner">Omistaja: ${players[owner]?.name||"Pelaaja"}</span>`:""}
+  `;
+
+  board.appendChild(d);
+ });
+
+ const center=document.createElement("div");
+ center.id="boardCenter";
+ center.className="board-center";
+ center.style.gridRow=`2 / ${side}`;
+ center.style.gridColumn=`2 / ${side}`;
+
+ center.innerHTML=`
+  <div class="center-logo">🌍</div>
+  <h2>MAAILMALLA</h2>
+  <p>Maailma odottaa!</p>
+  <div id="currentTurn"></div>
+  <div id="diceResult">🎲</div>
+  <button class="primary-button" id="rollButton" onclick="rollDice()">Heitä noppaa</button>
+  <div id="moneyPanel" class="money-panel"></div>
+  <button class="world-card-button" onclick="drawWorldCard()">🌍 Nosta Maailmalla-kortti</button>
+  <div id="worldCardResult"></div>
+  <div id="gameMessage"></div>
+ `;
+
+ board.appendChild(center);
 }
-function renderCalendar(){
- const now=new Date(),days=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
- $("calendarGrid").innerHTML=Array.from({length:days},(_,i)=>`<div class="calendar-day ${i+1===now.getDate()?"today":""}">${i+1}<br>${i%5===0?"🎁":"⭐"}</div>`).join("");
- const season=[3,6,9,12].find(m=>m>now.getMonth()+1)||3;
- $("seasonCountdown").textContent="Katso seuraavan kauden yllätykset!";
- $("monthlyCharacter").innerHTML=`<div class="character-card"><h3>Kuukauden hahmo</h3><div class="avatar">${characters[now.getMonth()%characters.length][0]}</div><p>${characters[now.getMonth()%characters.length][1]}</p></div>`;
+
+/* PELAAJAT JA RAHAT */
+
+function getCityPrice(index){
+ return 100+(index*15);
 }
-function renderAchievements(){
- $("achievementList").innerHTML=`<div class="character-card"><h3>🌍 Maailmanmatkaaja</h3><p>Pelaa ensimmäinen peli.</p><b>${score>0?"✅ Avattu":"🔒 Lukittu"}</b></div><div class="character-card"><h3>🪙 Kolikkokeräilijä</h3><p>Kerää kolikoita.</p><b>${coins>=150?"✅ Avattu":"🔒 Lukittu"}</b></div>`;
-}
-loadGame();$("coinCount").textContent=coins;
-if(settings.mode==="two")$("difficultyGroup").style.display="none";
-renderCharacterPicker();let playerMoney = [500, 500];
-let cityOwners = {};
-let worldCards = [
-  {text:"Löysit matkalta rahaa!",money:100},
-  {text:"Matkasi tuli kalliiksi.",money:-50},
-  {text:"Sait matkailupalkinnon!",money:150},
-  {text:"Maksa hotellimaksu.",money:-75},
-  {text:"Onnenpäivä! Saat bonuksen.",money:200},
-  {text:"Ostit matkamuiston.",money:-25},
-  {text:"Voitit kilpailun!",money:125},
-  {text:"Saat yllätysrahaa.",money:50}
-];
 
 function updateMoney(){
-  const panel=document.getElementById("moneyPanel");
-  if(!panel)return;
+ const panel=$("moneyPanel");
+ if(!panel)return;
 
-  panel.innerHTML=playerMoney.map((money,i)=>`
-    <div class="money-box">
-      <strong>${i===0?"Pelaaja 1":"Pelaaja 2"}</strong><br>
-      💰 ${money} kolikkoa
-    </div>
+ panel.innerHTML=players.map((p,i)=>`
+  <div class="money-box">
+   <strong>${p.char} ${p.name}</strong><br>
+   💰 ${playerMoney[i]??500} kolikkoa
+  </div>
+ `).join("");
+}
+
+function renderPlayers(){
+ if($("playerList")){
+  $("playerList").innerHTML=players.map((p,i)=>`
+   <p>
+    ${p.char} <b>${p.name}</b><br>
+    📍 Ruutu ${p.pos+1} · ⭐ ${p.score}<br>
+    💰 ${playerMoney[i]??500} kolikkoa
+   </p>
   `).join("");
+ }
+
+ updateMoney();
 }
 
-function getCityPrice(cityIndex){
-  return 100+(cityIndex*25);
+function updatePlayerTokens(){
+ document.querySelectorAll(".player-icons").forEach(el=>{
+  el.innerHTML="";
+ });
+
+ players.forEach((p,i)=>{
+  const tile=$("tile"+p.pos);
+  if(!tile)return;
+
+  let icons=tile.querySelector(".player-icons");
+
+  if(!icons){
+   icons=document.createElement("span");
+   icons.className="player-icons";
+   tile.appendChild(icons);
+  }
+
+  const token=document.createElement("span");
+  token.className="player-token";
+  token.textContent=p.char;
+  token.title=p.name;
+  icons.appendChild(token);
+ });
+
+ document.querySelectorAll(".board-tile").forEach(x=>{
+  x.classList.remove("current");
+ });
+
+ const active=$("tile"+players[turn]?.pos);
+ if(active)active.classList.add("current");
 }
 
-function buyCity(cityIndex){
-  const player=currentPlayer||0;
-  const owner=cityOwners[cityIndex];
+function updateGame(){
+ if(!players.length)return;
 
-  if(owner!==undefined){
-    if(owner===player){
-      alert("Tämä kaupunki on jo sinun!");
-      return;
-    }
+ if($("turnNumber"))$("turnNumber").textContent=round;
+ if($("roundDisplay"))$("roundDisplay").textContent=round;
+ if($("scoreDisplay"))$("scoreDisplay").textContent=players[0]?.score??0;
+ if($("coinCount"))$("coinCount").textContent=coins;
 
-    const fee=30;
-    if(playerMoney[player]<fee){
-      alert("Sinulla ei ole tarpeeksi rahaa käyntimaksuun!");
-      return;
-    }
+ if($("currentTurn")){
+  $("currentTurn").textContent="Vuorossa: "+players[turn].name;
+ }
 
-    playerMoney[player]-=fee;
-    playerMoney[owner]+=fee;
-    updateMoney();
-    alert("Maksoit käyntimaksun "+fee+" kolikkoa!");
-    return;
-  }
+ const dest=tiles[players[turn].pos];
 
-  const price=getCityPrice(cityIndex);
+ if($("destinationInfo")&&dest){
+  $("destinationInfo").innerHTML=`
+   <h4>📍 Kohde</h4>
+   <p>${dest[0]} ${dest[1]}</p>
+   <p>${dest[2]}</p>
+  `;
+ }
 
-  if(playerMoney[player]<price){
-    alert("Sinulla ei ole tarpeeksi rahaa kaupungin ostamiseen!");
-    return;
-  }
+ renderPlayers();
+ updatePlayerTokens();
+ renderCityOwners();
+ saveGame();
+}
 
-  if(!confirm("Haluatko ostaa kaupungin "+destinations[cityIndex].name+
-    " hintaan "+price+" kolikkoa?"))return;
+/* KAUPUNKIEN OSTAMINEN */
 
-  playerMoney[player]-=price;
-  cityOwners[cityIndex]=player;
-  updateMoney();
-  renderCityOwners();
-  alert("Ostit kaupungin!");
+function visitCity(index,isBot=false){
+ const player=players[turn];
+ const owner=cityOwners[index];
+ const city=tiles[index];
+
+ if(!player||!city)return;
+
+ if(owner===turn){
+  showGameMessage("Tämä kaupunki on jo sinun!");
+  return;
+ }
+
+ if(owner!==undefined){
+  const fee=30;
+  const payment=Math.min(fee,playerMoney[turn]);
+
+  playerMoney[turn]-=payment;
+  playerMoney[owner]+=payment;
+
+  showGameMessage(
+   "Maksoit "+players[owner].name+" käyntimaksun "+payment+" kolikkoa."
+  );
+
+  updateGame();
+  return;
+ }
+
+ const price=getCityPrice(index);
+
+ if(playerMoney[turn]<price){
+  showGameMessage("Sinulla ei ole tarpeeksi rahaa kaupungin ostamiseen.");
+  return;
+ }
+
+ let buy=false;
+
+ if(isBot){
+  buy=playerMoney[turn]>=price&&Math.random()<(settings.difficulty==="master"?0.95:settings.difficulty==="hard"?0.8:settings.difficulty==="normal"?0.6:0.35);
+ }else{
+  buy=confirm(
+   "Haluatko ostaa kaupungin "+city[1]+
+   " hintaan "+price+" kolikkoa?"
+  );
+ }
+
+ if(!buy)return;
+
+ playerMoney[turn]-=price;
+ cityOwners[index]=turn;
+
+ showGameMessage("Ostit kaupungin "+city[1]+"!");
+ updateGame();
 }
 
 function renderCityOwners(){
-  document.querySelectorAll(".board-tile").forEach((tile,i)=>{
-    const owner=cityOwners[i];
-    let label=tile.querySelector(".city-owner");
+ Object.keys(cityOwners).forEach(key=>{
+  const tile=$("tile"+key);
+  if(!tile)return;
 
-    if(owner===undefined){
-      if(label)label.remove();
-      return;
-    }
+  let label=tile.querySelector(".city-owner");
 
-    if(!label){
-      label=document.createElement("div");
-      label.className="city-owner";
-      tile.appendChild(label);
-    }
+  if(!label){
+   label=document.createElement("span");
+   label.className="city-owner";
+   tile.appendChild(label);
+  }
 
-    label.textContent="Omistaja: Pelaaja "+(owner+1);
-  });
+  label.textContent="Omistaja: "+(players[cityOwners[key]]?.name||"Pelaaja");
+ });
 }
+
+function showGameMessage(message){
+ const box=$("gameMessage");
+ if(box)box.textContent=message;
+}
+
+/* MAAILMALLA-KORTIT */
 
 function drawWorldCard(){
-  const player=currentPlayer||0;
-  const card=worldCards[Math.floor(Math.random()*worldCards.length)];
+ if(!gameActive)return;
 
-  playerMoney[player]=Math.max(0,playerMoney[player]+card.money);
-  updateMoney();
+ const card=worldCards[Math.floor(Math.random()*worldCards.length)];
+ const player=players[turn];
 
-  const result=document.getElementById("worldCardResult");
-  if(result){
-    result.innerHTML=`
-      <div class="world-card">
-        <h2>🌍 Maailmalla-kortti</h2>
-        <p>${card.text}</p>
-        <strong>${card.money>=0?"+":""}${card.money} kolikkoa</strong>
-      </div>
-    `;
-  }
+ playerMoney[turn]=Math.max(0,playerMoney[turn]+card.money);
+
+ const result=$("worldCardResult");
+
+ if(result){
+  result.innerHTML=`
+   <div class="world-card">
+    <h2>🌍 MAAILMALLA-KORTTI</h2>
+    <p>${card.text}</p>
+    <strong>${card.money>=0?"+":""}${card.money} kolikkoa</strong>
+   </div>
+  `;
+ }
+
+ updateGame();
 }
 
-function addGameEconomy(){
-  const board=document.getElementById("gameBoard");
-  if(!board)return;
+/* NOPPA JA LIIKKUMINEN */
 
-  if(!document.getElementById("moneyPanel")){
-    const panel=document.createElement("div");
-    panel.id="moneyPanel";
-    panel.className="money-panel";
-    board.parentNode.insertBefore(panel,board);
-  }
+function movePlayer(player,dice,isBot=false){
+ const oldPosition=player.pos;
 
-  if(!document.getElementById("worldCardPanel")){
-    const panel=document.createElement("div");
-    panel.id="worldCardPanel";
-    panel.innerHTML=`
-      <button class="world-card-button" onclick="drawWorldCard()">
-        🌍 Nosta Maailmalla-kortti
-      </button>
-      <div id="worldCardResult"></div>`;
-    board.parentNode.appendChild(panel);
-  }
+ player.pos=(player.pos+dice)%tileCount;
+ player.score+=10;
 
-  updateMoney();
-  renderCityOwners();
+ if(player.pos<oldPosition){
+  playerMoney[turn]+=100;
+  showGameMessage("Kuljit lähtöruudun kautta ja sait 100 kolikkoa!");
+ }
+
+ if(!isBot){
+  coins+=5;
+  score+=10;
+ }
+
+ updatePlayerTokens();
+ updateMoney();
+
+ visitCity(player.pos,isBot);
 }
 
-function showCityPurchase(cityIndex){
-  const city=destinations[cityIndex];
-  if(!city)return;
+function finishTurn(){
+ if(players[turn].pos===0){
+  round++;
+ }
 
-  const price=getCityPrice(cityIndex);
-  const owner=cityOwners[cityIndex];
+ if(round>settings.length){
+  endGame();
+  return;
+ }
 
-  if(owner===undefined){
-    buyCity(cityIndex);
-  }else{
-    buyCity(cityIndex);
-  }
+ turn=(turn+1)%players.length;
+
+ updateGame();
+
+ if(settings.mode==="bot"&&turn===1){
+  const button=$("rollButton");
+  if(button)button.disabled=true;
+  setTimeout(botTurn,800);
+ }else{
+  const button=$("rollButton");
+  if(button)button.disabled=false;
+ }
 }
 
-const oldCreateBoard=createBoard;
-createBoard=function(){
-  oldCreateBoard();
-  addGameEconomy();
-};
-</script>
+function rollDice(){
+ if(!gameActive||turn!==0&&settings.mode==="bot")return;
+
+ const dice=Math.floor(Math.random()*6)+1;
+
+ if($("diceResult"))$("diceResult").textContent="🎲 "+dice;
+
+ movePlayer(players[turn],dice,false);
+ finishTurn();
+}
+
+function botTurn(){
+ if(!gameActive||settings.mode!=="bot")return;
+
+ const p=players[1];
+ let dice=Math.floor(Math.random()*6)+1;
+
+ if(settings.difficulty==="easy"){
+  dice=Math.max(1,dice-1);
+ }
+
+ if(settings.difficulty==="master"){
+  dice=Math.min(6,dice+1);
+ }
+
+ if($("diceResult")){
+  $("diceResult").textContent="🤖 Botti heitti "+dice;
+ }
+
+ movePlayer(p,dice,true);
+ finishTurn();
+}
+
+/* PELIN PÄÄTTYMINEN */
+
+function endGame(){
+ gameActive=false;
+
+ const winner=[...players].sort((a,b)=>b.score-a.score)[0];
+
+ if($("boardCenter")){
+  $("boardCenter").innerHTML=`
+   <div class="center-logo">🏆</div>
+   <h2>Peli päättyi!</h2>
+   <h3>${winner.name} voitti!</h3>
+   <p>Pisteet: ${winner.score}</p>
+   <p>Rahaa jäljellä: ${playerMoney[players.indexOf(winner)]} kolikkoa</p>
+   <button class="primary-button" onclick="showScreen('home')">Valikkoon</button>
+   <button class="primary-button" onclick="startGame()">Uusi peli</button>
+  `;
+ }
+
+ saveGame();
+}
+
+function continueGame(){
+ if(gameActive&&players.length){
+  createBoard();
+  showScreen("game");
+  updateGame();
+ }else{
+  showScreen("setup");
+ }
+}
+
+/* HAHMOT */
+
+function renderCharacters(){
+ if(!$("characterGrid"))return;
+
+ $("characterGrid").innerHTML=characters.map((c,i)=>`
+  <div class="character-card">
+   <div class="avatar">${c[0]}</div>
+   <h3>${c[1]}</h3>
+   <p>${owned.includes(i)?"✅ Omistuksessa":"🔒 Ei vielä avattu"}</p>
+   ${selectedCharacter===i?"⭐ Valittu":""}
+  </div>
+ `).join("");
+}
+
+function renderShop(){
+ if(!$("shopCoins")||!$("shopGrid"))return;
+
+ $("shopCoins").textContent=coins;
+
+ $("shopGrid").innerHTML=characters.map((c,i)=>`
+  <div class="character-card">
+   <div class="avatar">${c[0]}</div>
+   <h3>${c[1]}</h3>
+   <p>${owned.includes(i)?"Omistuksessa":c[2]+" kolikkoa"}</p>
+   <button ${owned.includes(i)?"disabled":""} onclick="buyCharacter(${i})">
+    ${owned.includes(i)?"Omistettu":"Osta"}
+   </button>
+   ${owned.includes(i)?`<button onclick="chooseCharacter(${i});renderShop()">Valitse</button>`:""}
+  </div>
+ `).join("");
+}
+
+function buyCharacter(i){
+ const price=characters[i][2];
+
+ if(owned.includes(i))return;
+
+ if(coins<price){
+  alert("Sinulla ei ole tarpeeksi kolikoita.");
+  return;
+ }
+
+ coins-=price;
+ owned.push(i);
+
+ renderShop();
+
+ if($("coinCount"))$("coinCount").textContent=coins;
+
+ saveGame();
+}
+
+/* KALENTERI */
+
+function renderCalendar(){
+ if(!$("calendarGrid"))return;
+
+ const now=new Date();
+ const days=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+
+ $("calendarGrid").innerHTML=Array.from({length:days},(_,i)=>`
+  <div class="calendar-day ${i+1===now.getDate()?"today":""}">
+   ${i+1}<br>${i%5===0?"🎁":"⭐"}
+  </div>
+ `).join("");
+
+ if($("seasonCountdown")){
+  $("seasonCountdown").textContent="Katso seuraavan kauden yllätykset!";
+ }
+
+ if($("monthlyCharacter")){
+  const character=characters[now.getMonth()%characters.length];
+
+  $("monthlyCharacter").innerHTML=`
+   <div class="character-card">
+    <h3>Kuukauden hahmo</h3>
+    <div class="avatar">${character[0]}</div>
+    <p>${character[1]}</p>
+   </div>
+  `;
+ }
+}
+
+/* SAAVUTUKSET */
+
+function renderAchievements(){
+ if(!$("achievementList"))return;
+
+ $("achievementList").innerHTML=`
+  <div class="character-card">
+   <h3>🌍 Maailmanmatkaaja</h3>
+   <p>Pelaa ensimmäinen peli.</p>
+   <b>${score>0?"✅ Avattu":"🔒 Lukittu"}</b>
+  </div>
+  <div class="character-card">
+   <h3>🪙 Kolikkokeräilijä</h3>
+   <p>Kerää kolikoita.</p>
+   <b>${coins>=150?"✅ Avattu":"🔒 Lukittu"}</b>
+  </div>
+  <div class="character-card">
+   <h3>🏙️ Kaupunkien omistaja</h3>
+   <p>Osta vähintään yksi kaupunki.</p>
+   <b>${Object.keys(cityOwners).length>0?"✅ Avattu":"🔒 Lukittu"}</b>
+  </div>
+  <div class="character-card">
+   <h3>🎴 Korttien kerääjä</h3>
+   <p>Nosta Maailmalla-kortti.</p>
+   <b>${$("worldCardResult")?.textContent?"✅ Avattu":"🔒 Lukittu"}</b>
+  </div>
+ `;
+}
+
+/* KÄYNNISTYS */
+
+loadGame();
+
+if($("coinCount"))$("coinCount").textContent=coins;
+
+if(settings.mode==="two"&&$("difficultyGroup")){
+ $("difficultyGroup").style.display="none";
+}
+
+renderCharacterPicker();
+</script> 
  
  <script>
 const memoryPairs=[
