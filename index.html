@@ -4,86 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MAAILMALLA 2027</title>
-<style>*{box-sizing:border-box}
-body{margin:0;background:#071b35;color:#f4f8ff;font-family:Arial,sans-serif}
-button{cursor:pointer;border:0;border-radius:12px;padding:12px 16px;font-weight:bold;background:#183b60;color:white}
-button:hover{filter:brightness(1.2)}
-.topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 5%;background:#0b2748;position:sticky;top:0;z-index:5}
-.logo{font-size:21px;font-weight:900}.logo span{color:#ffd166}
-.coins{color:#ffd166;font-weight:bold}
-main{max-width:1250px;margin:auto;padding:24px}
-.screen{display:none}.screen.active{display:block}
-.hero{min-height:400px;border-radius:28px;padding:40px;background:linear-gradient(120deg,#124b73,#142c59 65%,#552d65);display:flex;align-items:center;justify-content:space-between;gap:20px;overflow:hidden}
-.hero-content{max-width:600px}.eyebrow{color:#ffe49a;font-weight:bold;letter-spacing:2px}
-h1{font-size:clamp(42px,7vw,76px);line-height:1.02;margin:20px 0}
-h1 span{color:#ffd166}.hero p{font-size:18px;line-height:1.6;color:#d6e7f8}
-.hero-buttons,.feature-pills,.option-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
-.primary-button{background:#ffd166;color:#182944;padding:15px 22px;font-size:16px}
-.secondary-button{background:#ffffff20;border:1px solid #ffffff55}
-.feature-pills span{background:#ffffff18;border-radius:30px;padding:9px 13px}
-.hero-art{font-size:130px;position:relative;padding:30px}
-.globe{filter:drop-shadow(0 15px 15px #0005)}
-.floating-item{position:absolute;font-size:35px}
-.item-one{top:0;right:5px}.item-two{bottom:15px;left:0}.item-three{top:15px;left:5px}.item-four{bottom:0;right:0}
-.home-grid,.minigame-grid,.character-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px;margin-top:24px}
-.home-card,.minigame-card{background:#102e50;border:1px solid #315477;padding:22px;text-align:left;min-height:135px}
-.home-card span,.minigame-card span{display:block;font-size:32px;margin-bottom:12px}
-.home-card strong,.minigame-card strong{display:block;font-size:17px}
-.home-card small,.minigame-card small{display:block;color:#b8cce0;margin-top:8px}
-.section-heading{text-align:center;margin:25px 0}
-.section-heading h2{font-size:32px}
-.section-heading p{color:#b8cce0}
-.back-button{float:left;background:#244968}
-.settings-panel{max-width:850px;margin:25px auto;background:#102e50;padding:25px;border-radius:20px}
-.setting-group{margin:24px 0}.setting-group h3{margin-bottom:12px}
-.option{background:#1b4268;border:2px solid transparent}
-.option.selected{border-color:#ffd166;background:#315779}
-.option-grid.four .option{flex:1;min-width:100px}
-.character-picker{display:flex;flex-wrap:wrap;gap:10px}
-.character-choice{font-size:28px;padding:12px;background:#1b4268}
-.character-choice.selected{outline:3px solid #ffd166}
-.start-game-button{width:100%;margin-top:20px}
-.game-header{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.game-layout{display:grid;grid-template-columns:180px minmax(0,1fr) 180px;gap:15px;margin-top:20px}
-.player-panel,.game-actions{background:#102e50;padding:15px;border-radius:16px}
-.game-actions button{display:block;width:100%;margin:8px 0;text-align:left}
-.board-wrapper{min-width:0;overflow:auto;background:#0b2748;border-radius:18px;padding:12px}
-.game-board{display:grid;grid-template-columns:repeat(7,minmax(58px,1fr));grid-template-rows:repeat(7,minmax(58px,1fr));gap:5px;min-width:430px;aspect-ratio:1}
-.board-tile{background:#1b4268;border:1px solid #426887;border-radius:9px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:3px;font-size:11px}
-.board-tile .tile-icon{font-size:20px}
-.board-tile.current{outline:3px solid #ffd166}
-.board-center{grid-column:2/7;grid-row:2/7;background:linear-gradient(140deg,#154d6c,#182b53);border-radius:15px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:10px}
-.center-logo{font-size:45px}.board-center h2{margin:5px}
-#diceResult{font-size:32px;margin:8px}
-.character-card{background:#102e50;border:1px solid #315477;border-radius:16px;padding:18px;text-align:center}
-.character-card .avatar{font-size:48px}
-.character-card h3{margin:8px 0}
-.character-card p{color:#b8cce0}
-.shop-balance,.season-countdown{padding:18px;background:#173b5d;border-radius:14px;text-align:center;margin:20px 0}
-.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-.calendar-day{background:#173b5d;padding:12px 4px;text-align:center;border-radius:8px}
-.calendar-day.today{outline:2px solid #ffd166}
-#minigameArea{margin-top:25px;background:#102e50;padding:20px;border-radius:18px}
-.memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.memory-card{min-height:85px;background:#1d5275;font-size:17px;overflow-wrap:anywhere}
-.memory-card.open,.memory-card.matched{background:#d9edf7;color:#142c45}
-footer{text-align:center;color:#9db6ce;padding:25px}
-@media(max-width:800px){
- .hero{padding:25px}.hero-art{font-size:85px}
- .game-layout{grid-template-columns:1fr}
- .game-header{flex-wrap:wrap}
- .calendar-grid{grid-template-columns:repeat(7,minmax(0,1fr))}
-}
-@media(max-width:500px){
- main{padding:12px}.hero{display:block}.hero-art{text-align:center}
- .topbar{padding:12px}.logo{font-size:16px}
- .memory-grid{grid-template-columns:repeat(2,1fr)}
-}.player-icons{
+<style>
+*{box-sizing:border-box}
+.player-icons{
  display:flex;
  justify-content:center;
+ align-items:center;
  flex-wrap:wrap;
- min-height:24px;
+ gap:4px;
+ min-height:34px;
 }
+.player-token{
+ display:inline-flex;
+ justify-content:center;
+ align-items:center;
+ width:34px;
+ height:34px;
+ border:2px solid #ffd166;
+ border-radius:50%;
+ background:#fff;
+ font-size:23px;
+ box-shadow:0 2px 6px #0005;
+}
+.board-tile{position:relative}
 .board-tile.current{
  outline:3px solid #ffd166;
  background:#315b78;
@@ -94,10 +37,35 @@ footer{text-align:center;color:#9db6ce;padding:25px}
  border-radius:14px;
  padding:12px;
  margin-top:10px;
- max-width:250px;
+ max-width:280px;
+ color:white;
 }
-.world-card h2{
- color:#ffe49a;
+.world-card h2{color:#ffe49a}
+.money-panel{
+ display:flex;
+ justify-content:center;
+ flex-wrap:wrap;
+ gap:12px;
+ margin:12px 0;
+}
+.money-box,.city-box{
+ background:#173b55;
+ border:1px solid #ffd166;
+ border-radius:12px;
+ padding:10px;
+ color:white;
+}
+.money-box strong{color:#ffe49a}
+.city-price{color:#ffd166;font-weight:bold}
+.city-owner{font-size:12px;color:#b9e5ff}
+.world-card-button{
+ background:#ffd166;
+ color:#173047;
+ border:0;
+ border-radius:10px;
+ padding:10px 16px;
+ font-weight:bold;
+ cursor:pointer;
 }
 </style>
 </head>
@@ -322,7 +290,160 @@ function renderAchievements(){
 }
 loadGame();$("coinCount").textContent=coins;
 if(settings.mode==="two")$("difficultyGroup").style.display="none";
-renderCharacterPicker();
+renderCharacterPicker();let playerMoney = [500, 500];
+let cityOwners = {};
+let worldCards = [
+  {text:"Löysit matkalta rahaa!",money:100},
+  {text:"Matkasi tuli kalliiksi.",money:-50},
+  {text:"Sait matkailupalkinnon!",money:150},
+  {text:"Maksa hotellimaksu.",money:-75},
+  {text:"Onnenpäivä! Saat bonuksen.",money:200},
+  {text:"Ostit matkamuiston.",money:-25},
+  {text:"Voitit kilpailun!",money:125},
+  {text:"Saat yllätysrahaa.",money:50}
+];
+
+function updateMoney(){
+  const panel=document.getElementById("moneyPanel");
+  if(!panel)return;
+
+  panel.innerHTML=playerMoney.map((money,i)=>`
+    <div class="money-box">
+      <strong>${i===0?"Pelaaja 1":"Pelaaja 2"}</strong><br>
+      💰 ${money} kolikkoa
+    </div>
+  `).join("");
+}
+
+function getCityPrice(cityIndex){
+  return 100+(cityIndex*25);
+}
+
+function buyCity(cityIndex){
+  const player=currentPlayer||0;
+  const owner=cityOwners[cityIndex];
+
+  if(owner!==undefined){
+    if(owner===player){
+      alert("Tämä kaupunki on jo sinun!");
+      return;
+    }
+
+    const fee=30;
+    if(playerMoney[player]<fee){
+      alert("Sinulla ei ole tarpeeksi rahaa käyntimaksuun!");
+      return;
+    }
+
+    playerMoney[player]-=fee;
+    playerMoney[owner]+=fee;
+    updateMoney();
+    alert("Maksoit käyntimaksun "+fee+" kolikkoa!");
+    return;
+  }
+
+  const price=getCityPrice(cityIndex);
+
+  if(playerMoney[player]<price){
+    alert("Sinulla ei ole tarpeeksi rahaa kaupungin ostamiseen!");
+    return;
+  }
+
+  if(!confirm("Haluatko ostaa kaupungin "+destinations[cityIndex].name+
+    " hintaan "+price+" kolikkoa?"))return;
+
+  playerMoney[player]-=price;
+  cityOwners[cityIndex]=player;
+  updateMoney();
+  renderCityOwners();
+  alert("Ostit kaupungin!");
+}
+
+function renderCityOwners(){
+  document.querySelectorAll(".board-tile").forEach((tile,i)=>{
+    const owner=cityOwners[i];
+    let label=tile.querySelector(".city-owner");
+
+    if(owner===undefined){
+      if(label)label.remove();
+      return;
+    }
+
+    if(!label){
+      label=document.createElement("div");
+      label.className="city-owner";
+      tile.appendChild(label);
+    }
+
+    label.textContent="Omistaja: Pelaaja "+(owner+1);
+  });
+}
+
+function drawWorldCard(){
+  const player=currentPlayer||0;
+  const card=worldCards[Math.floor(Math.random()*worldCards.length)];
+
+  playerMoney[player]=Math.max(0,playerMoney[player]+card.money);
+  updateMoney();
+
+  const result=document.getElementById("worldCardResult");
+  if(result){
+    result.innerHTML=`
+      <div class="world-card">
+        <h2>🌍 Maailmalla-kortti</h2>
+        <p>${card.text}</p>
+        <strong>${card.money>=0?"+":""}${card.money} kolikkoa</strong>
+      </div>
+    `;
+  }
+}
+
+function addGameEconomy(){
+  const board=document.getElementById("gameBoard");
+  if(!board)return;
+
+  if(!document.getElementById("moneyPanel")){
+    const panel=document.createElement("div");
+    panel.id="moneyPanel";
+    panel.className="money-panel";
+    board.parentNode.insertBefore(panel,board);
+  }
+
+  if(!document.getElementById("worldCardPanel")){
+    const panel=document.createElement("div");
+    panel.id="worldCardPanel";
+    panel.innerHTML=`
+      <button class="world-card-button" onclick="drawWorldCard()">
+        🌍 Nosta Maailmalla-kortti
+      </button>
+      <div id="worldCardResult"></div>
+    `;
+    board.parentNode.appendChild(panel);
+  }
+
+  updateMoney();
+  renderCityOwners();
+}
+
+function showCityPurchase(cityIndex){
+  const city=destinations[cityIndex];
+  if(!city)return;
+
+  const price=getCityPrice(cityIndex);
+  const owner=cityOwners[cityIndex];
+
+  if(owner===undefined){
+    buyCity(cityIndex);
+  }else{
+    buyCity(cityIndex);
+  }
+}
+
+const oldCreateBoard=createBoard;
+createBoard=function(){
+  oldCreateBoard();
+  addGameEconomy();
+};
 </script><script>
 const memoryPairs=[
 ["🇫🇮","Suomi"],["🇯🇵","Japani"],["🇧🇷","Brasilia"],["🇨🇦","Kanada"],
